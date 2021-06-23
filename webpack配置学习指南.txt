@@ -1,5 +1,14 @@
-# webpack配置学习指南
+# 如何配置pack.json对webpack进行打包配置
 
 ### 京东webpack配置
 
 https://jelly.jd.com/article/5ee390707c53070156dd4078
+
+### 入口文件
+
+#### 单入口
+
+#### 多入口
+
+### 出口文件
+
