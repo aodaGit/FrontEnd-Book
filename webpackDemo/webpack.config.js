@@ -1,7 +1,6 @@
 const path = require("path");
-// 这一步必须在此引入，否则下面的使用会报错
+// html自动引入js
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-
 // 清除上一次的打包缓存
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
@@ -24,7 +23,7 @@ module.exports = {
     filename: "[name].[hash:8].js", // 根据入口文件，生成添加哈希值的动态出口文件
     path: path.resolve(__dirname, "./dist"), // 打包后的目录文佳夹
   },
-  //   自动引入打包后的js文件到html
+  //   与html相关的配置
   plugins: [
     // 清除上一次的打包缓存
     new CleanWebpackPlugin(),
@@ -61,4 +60,18 @@ module.exports = {
       minify: false, //默认生产环境压缩，开发环境不压缩
     }),
   ],
+
+  // 不同类型的文件打包配置
+   module:{
+      rules:[
+        {
+          test:/\.css$/,
+          use:['style-loader','css-loader'] // 从右向左解析原则
+        },
+        {
+          test:/\.less$/,
+          use:['style-loader','css-loader','less-loader'] // 先将less解析为css，再转换为css AST树，挂载到dom
+        }
+      ]
+    }
 };
