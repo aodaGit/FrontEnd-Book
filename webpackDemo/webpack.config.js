@@ -62,16 +62,22 @@ module.exports = {
   ],
 
   // 不同类型的文件打包配置
-   module:{
-      rules:[
-        {
-          test:/\.css$/,
-          use:['style-loader','css-loader'] // 从右向左解析原则
-        },
-        {
-          test:/\.less$/,
-          use:['style-loader','css-loader','less-loader'] // 先将less解析为css，再转换为css AST树，挂载到dom
-        }
-      ]
-    }
+  module: {
+    rules: [
+      {
+        test: /\.less$/,
+        use: [
+          "style-loader",
+          "css-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              plugins: [require("autoprefixer")],
+            },
+          },
+          "less-loader",
+        ], // 从右到左解析原则，先将less解析为css，再进行修复，再解析为css，再解析为css AST树挂载到dom
+      },
+    ],
+  },
 };
