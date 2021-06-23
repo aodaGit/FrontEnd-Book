@@ -4,6 +4,9 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 // 清除上一次的打包缓存
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
+// css切割
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
 module.exports = {
   // 环境切换
   mode: "development", // 默认生产模式
@@ -59,19 +62,87 @@ module.exports = {
       // 压缩设置
       minify: false, //默认生产环境压缩，开发环境不压缩
     }),
+    // css分割
+    new MiniCssExtractPlugin({
+      filename: "[name].[hash].css",
+      chunkFilename: "[id].css",
+    })
   ],
 
   // 不同类型的文件打包配置
-   module:{
-      rules:[
-        {
-          test:/\.css$/,
-          use:['style-loader','css-loader'] // 从右向左解析原则
+  module: {
+    //css样式文件打包
+    rules: [
+      //css样式文件打包
+      {
+        test: /\.less$/,
+        use: ['style-loader', 'css-loader', 'less-loader'] // 先将less解析为css，再转换为css AST树，挂载到dom
+      },
+      //图片打包
+      {
+        test: /\.(jpe?g|png|gif)$/i,
+        use: [
+          {
+            loader: 'url-loader', //url-load与file-loa配置使用，小于限制大小，转为base64，大于后，直接输出到相关文件目录中
+            options: {
+              limit: 10240,
+              fallback: {
+                loader: 'file-loader',
+                options: {
+                  name: 'img/[name].[hash:8].[ext]'
+                }
+              }
+            }
+          }
+        ]
+      },
+      // 媒体文件打包
+      {
+        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/, //媒体文件
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10240,
+              fallback: {
+                loader: 'file-loader',
+                options: {
+                  name: 'media/[name].[hash:8].[ext]'
+                }
+              }
+            }
+          }
+        ]
+      },
+      // 字体文件打包
+      {
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i, // 字体
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10240,
+              fallback: {
+                loader: 'file-loader',
+                options: {
+                  name: 'fonts/[name].[hash:8].[ext]'
+                }
+              }
+            }
+          }
+        ]
+      },
+      // js转义 ES6及以上转为ES5
+      {
+        test:/\.js$/,//支持js jsx ts tsx
+        use:{
+          loader:'babel-loader',
+          options:{
+            presets:['@babel/preset-env']
+          }
         },
-        {
-          test:/\.less$/,
-          use:['style-loader','css-loader','less-loader'] // 先将less解析为css，再转换为css AST树，挂载到dom
-        }
-      ]
-    }
+        exclude:/node_modules/
+      },
+    ]
+  }
 };
