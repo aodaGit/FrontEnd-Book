@@ -1,5 +1,7 @@
 # 如何配置pack.json对webpack进行打包配置
 
+> 请同学配合仓库中的webpackDemo学习
+
 ### 京东webpack配置
 
 https://jelly.jd.com/article/5ee390707c53070156dd4078
