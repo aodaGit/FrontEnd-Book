@@ -10,12 +10,16 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+
     "autoprefixer": "^10.2.6",
+
+
     "clean-webpack-plugin": "^4.0.0-alpha.0",
     "css-loader": "^5.2.6",
     "html-webpack-plugin": "^5.3.2",
     "less": "^4.1.1",
     "less-loader": "^10.0.0",
+
     "mini-css-extract-plugin": "^1.6.0",
     "postcss-loader": "^6.1.0",
     "style-loader": "^2.0.0",
