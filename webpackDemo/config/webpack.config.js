@@ -1,12 +1,13 @@
 //webpack基础配置
 
 //webpack实例
-const Webpack = require('webpack')
+const Webpack = require("webpack");
 
 //静态文件赋值
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const path = require("path");
+
 // html自动引入js
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
@@ -14,24 +15,20 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 // css自动添加前缀
-const autoprefixer = require('autoprefixer');
+const autoprefixer = require("autoprefixer");
 
 // css切割
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 //vue文件处理器
-const vueLoaderPlugin = require('vue-loader/lib/plugin');
+const vueLoaderPlugin = require("vue-loader/lib/plugin");
 
 //当前开发环境
-const devMode = process.argv.indexOf('--mode=production') === -1;
+const devMode = process.argv.indexOf("--mode=production") === -1;
 
-// 分析打包时间
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
-const smp = new SpeedMeasurePlugin();
-
-module.exports = smp.wrap({
+module.exports = {
   // 环境切换
-  mode: "development", // 默认生产模式
+  // mode: "development", // 默认生产模式
   // mode: "production", // 默认生产模式
 
   // 入口文件设置
@@ -267,6 +264,4 @@ module.exports = smp.wrap({
     },
     extensions: ["*", ".js", ".json", "css", ".vue"],
   },
-});
-
-
+};
