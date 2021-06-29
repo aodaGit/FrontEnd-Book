@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config config/webpack.config.js",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --open --config config/webpack.dev.js",
     "dll": "webpack --config config/webpack.dll.config.js",
-    "analyz": "cross-env NODE_ENV=production npm_config_report=true npm run build"
+    "build": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
+    "analyz": "cross-env NODE_ENV=production webpack --config config/webpack.analyz.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +16,7 @@
     "cache-loader": "^4.1.0",
     "clean-webpack-plugin": "^4.0.0-alpha.0",
     "copy-webpack-plugin": "^9.0.1",
+    "cross-env": "^7.0.3",
     "css-loader": "^5.2.6",
     "html-webpack-plugin": "^5.3.2",
     "less": "^4.1.1",

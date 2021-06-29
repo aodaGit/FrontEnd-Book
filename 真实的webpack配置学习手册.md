@@ -52,11 +52,19 @@
   ```
 
 - ```js
+  npm install webpack-merge --save-dev  webpack打包文件合并，用于加载合并开发和生产打包文件
+  ```
+
+- ```js
   npm i babel-loader @babel/core @babel/preset-env -D  js的es6转换为es5兼容写法
   ```
 
 - ```js
   npm install --save @babel/polyfill   部分浏览器不支持的写法使用polyfill进行模拟
+  ```
+
+- ```
+  npm install --save-dev cross-env  环境变量统一设置，支持mac window linux系统
   ```
 
   
@@ -373,9 +381,155 @@
       }
   ```
 
+#### 第三方库打包抽离
 
+> webpack每次在打包项目时，会将项目使用的所有依赖全部打包，但是对于一些第三方库，没必要每次都去打包，因此，我们需要将其单独抽离出来，减少打包时间
+
+- 与webpack.config.js同级的文件夹内，新建webpack.dll.js
+
+- webpack.dll.js
+
+  - ```js
+    // 第三方依赖包抽离
+    const path = require("path");
+    const webpack = require("webpack");
+    module.exports = {
+        entry: {
+            // 想要抽离的第三方包
+            vendor: ['vue']
+        },
+        output: {
+            path: path.resolve(__dirname, '../static'), // 打包后文件输出的位置
+            filename: '[name].dll.js',
+            library: '[name]_library'
+            // 这里需要和webpack.DllPlugin中的`name: '[name]_library',`保持一致。
+        },
+        plugins: [
+            new webpack.DllPlugin({
+                //生成的mainfest文件路径
+                path: path.resolve(__dirname, '../static/[name]-manifest.json'),
+                name: '[name]_library',
+                context: __dirname
+            })
+        ]
+    };
+    
+    ```
+
+    
 
 #### 不同环境webpack配置
 
+> 理想状态下，我们期望能够通过设置不同的环境变量，提供不同的base_url。同时运行不同的打包命令
+>
+> 具体做法就是通过在pack.json中统一设置环境变量，同时分配不同的打包命令来实现
 
+- 开发环境
+
+  > 开发过程中，我们期望代码不压缩，方便调试，支持热更新，同时本地loachost可以访问
+
+  - ```js
+    //开发环境打包配置
+    // webpack.dev.js
+    const Webpack = require('webpack')
+    //引入基础打包配置
+    const webpackConfig = require('./webpack.config.js')
+    
+    //合并打包配置
+    const WebpackMerge = require('webpack-merge')
+    
+    module.exports = WebpackMerge(webpackConfig,{
+      mode:'development',
+      //设置代码sorce-map
+      devtool:'cheap-module-eval-source-map',
+    
+      //设置代码热更新
+      devServer:{
+        port:3000,  //端口
+        hot:true,
+        contentBase:'../dist'  //热更新目录
+      },
+      plugins:[
+          //设置热更新
+        new Webpack.HotModuleReplacementPlugin()
+      ]
+    })
+    
+    ```
+
+- 生产环境
+
+  > 生产环境，我们期望代码可以压缩，减小打包体积
+
+  - ```js
+    //生产环境打包配置
+    // webpack.prod.js
+    
+    const path = require('path')
+    const webpackConfig = require('./webpack.config.js')
+    const WebpackMerge = require('webpack-merge')
+    
+    //css压缩
+    const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+    
+    //静态文件赋值
+    const CopyWebpackPlugin = require('copy-webpack-plugin')
+    
+    //js压缩
+    const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+    
+    module.exports = WebpackMerge.merge(webpackConfig, {
+      mode: "production",
+      devtool: "cheap-module-source-map",
+      plugins: [
+        //拷贝指定静态资源到指定目录
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: path.resolve(__dirname, "../public"),
+              to: path.resolve(__dirname, "../dist"),
+            },
+          ],
+        }),
+      ],
+      optimization: {
+        minimizer: [
+          //js压缩
+          new UglifyJsPlugin({
+            cache: true,
+            parallel: true,
+            sourceMap: true,
+          }),
+          //css压缩
+          new OptimizeCssAssetsPlugin({}),
+        ],
+        splitChunks: {
+          chunks: "all",
+          cacheGroups: {
+            libs: {
+              name: "chunk-libs",
+              test: /[\\/]node_modules[\\/]/,
+              priority: 10,
+              chunks: "initial", // 只打包初始时依赖的第三方
+            },
+          },
+        },
+      },
+    });
+    
+    ```
+
+- pack.json打包命令配置
+
+  > 将打包命名直接配置在pack.json中，方便我们对其进行打包优化
+
+  - ```js
+    "scripts": {
+        "start": "cross-env NODE_ENV=development webpack-dev-server --open --config config/webpack.dev.js",
+        "build": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
+        "dll": "webpack --config config/webpack.dll.config.js",   //第三方库抽离
+      }
+    ```
+
+    
 
