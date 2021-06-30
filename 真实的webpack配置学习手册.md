@@ -75,11 +75,11 @@
   npm install webpack-bundle-analyzer --save-dev  分析打包内容
   ```
   
-- ```
+- ```js
    npm install @babel/preset-react -D  react文件打包支持  
   ```
 
-  
+- vue文件打包支持
 
 ### webpack模块配置
 
@@ -548,5 +548,14 @@
     https://www.cnblogs.com/Jacob98/p/14458896.html
     ```
 
-    
+
+### react打包注意事项
+
+- 出现两次配置文件  删掉默认的配置，启用babelrc
+
+### vue打包注意事项
+
+
+
+
 

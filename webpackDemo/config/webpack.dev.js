@@ -2,8 +2,7 @@
 // webpack.dev.js
 const Webpack = require('webpack')
 //引入基础打包配置
-const webpackConfig = require('./webpack.config.js')
-
+const webpackConfig = require('./webpack.common.js')
 //合并打包配置
 const WebpackMerge = require('webpack-merge')
 
@@ -27,4 +26,5 @@ module.exports = WebpackMerge.merge(webpackConfig, {
       //设置热更新
       new Webpack.HotModuleReplacementPlugin(),
     ],
-  });
+  }
+})

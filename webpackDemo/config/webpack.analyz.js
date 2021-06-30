@@ -2,7 +2,7 @@
 // webpack.analyz.js
 
 const path = require("path");
-const webpackConfig = require("./webpack.config.js");
+const webpackConfig = require("./webpack.common.js");
 const WebpackMerge = require("webpack-merge");
 
 // 分析依赖包大小
