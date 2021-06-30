@@ -1,6 +1,6 @@
 # 记一次真实项目webpack打包优化
 
-> webpack已成为所有前端项目必备的打包工具，真实在项目中配置，不仅可以让自己对webpack的打包做一个全面了解，也对自己技术有很大提升。
+> webpack已成为所有前端项目必备的打包工具，真实在项目中配置，不仅可以让自己对webpack的打包做一个全面了解，也对自己技术有很大提升，本文档会根据webpack最新的api进行真实打包配置，请需要学习的同学务必亲自配置！
 
 ### 依赖包
 
@@ -60,11 +60,23 @@
   ```
 
 - ```js
-  npm install --save @babel/polyfill   部分浏览器不支持的写法使用polyfill进行模拟
+  npm install --save @babel/plugin-transform-runtime  @babel/runtime-corejs3  部分浏览器不支持的写法使用polyfill进行模拟
   ```
 
 - ```
   npm install --save-dev cross-env  环境变量统一设置，支持mac window linux系统
+  ```
+
+- ```
+  npm install speed-measure-webpack-plugin --save-dev  打包时间分析
+  ```
+
+- ```js
+  npm install webpack-bundle-analyzer --save-dev  分析打包内容
+  ```
+  
+- ```
+   npm install @babel/preset-react -D  react文件打包支持  
   ```
 
   
@@ -480,7 +492,6 @@
     
     module.exports = WebpackMerge.merge(webpackConfig, {
       mode: "production",
-      devtool: "cheap-module-source-map",
       plugins: [
         //拷贝指定静态资源到指定目录
         new CopyWebpackPlugin({
@@ -518,7 +529,7 @@
     });
     
     ```
-
+  
 - pack.json打包命令配置
 
   > 将打包命名直接配置在pack.json中，方便我们对其进行打包优化
@@ -529,6 +540,12 @@
         "build": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
         "dll": "webpack --config config/webpack.dll.config.js",   //第三方库抽离
       }
+    ```
+
+- 参考文档
+
+  - ```js
+    https://www.cnblogs.com/Jacob98/p/14458896.html
     ```
 
     
