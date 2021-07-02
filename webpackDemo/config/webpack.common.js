@@ -1,10 +1,10 @@
 //webpack基础配置
 
 //webpack实例
-const Webpack = require("webpack");
+// const Webpack = require("webpack");
 
 //静态文件赋值
-const CopyWebpackPlugin = require("copy-webpack-plugin");
+// const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const path = require("path");
 
@@ -14,14 +14,14 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 // 清除上一次的打包缓存
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
-// css自动添加前缀
-const autoprefixer = require("autoprefixer");
-
 // css切割
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 //vue文件处理器
-const vueLoaderPlugin = require("vue-loader/lib/plugin");
+// const vueLoaderPlugin = require("vue-loader/lib/plugin");
+
+// 命令行提示美化
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 //当前开发环境
 const devMode = process.argv.indexOf("--mode=production") === -1;
@@ -34,13 +34,13 @@ module.exports = {
   // 入口文件设置
 
   // 单文件入口
-  // entry: path.resolve(__dirname, "./src/main.js"),
+  entry: path.resolve(__dirname, "../src/index.js"),
 
   // 多文件入口，对应多出口文件
-  entry: {
-    main: path.resolve(__dirname, "../src/main.js"),
-    sub: path.resolve(__dirname, "../src/sub.js"),
-  },
+  // entry: {
+  //   main: path.resolve(__dirname, "../src/main.js"),
+  //   sub: path.resolve(__dirname, "../src/sub.js"),
+  // },
 
   //   出口文件设置
   output: {
@@ -63,49 +63,47 @@ module.exports = {
       inject: "head",
 
       // 多入口时，对应的入口模块名
-      chunks: ["main"],
+      // chunks: ["main"],
 
       // 压缩设置
       minify: false, //默认生产环境压缩，开发环境不压缩
     }),
-    new HtmlWebpackPlugin({
-      // 打包基础路径
-      template: path.resolve(__dirname, "../public/sub.html"),
+    // new HtmlWebpackPlugin({
+    //   // 打包基础路径
+    //   template: path.resolve(__dirname, "../public/sub.html"),
 
-      // 指定生成的文件名称
-      filename: "sub.[hash:8].html",
+    //   // 指定生成的文件名称
+    //   filename: "sub.[hash:8].html",
 
-      // 指定js脚本存放的位置，头部还是脚部
-      inject: "head",
+    //   // 指定js脚本存放的位置，头部还是脚部
+    //   inject: "head",
 
-      // 多入口时，对应的入口模块名
-      chunks: ["sub"],
+    //   // 多入口时，对应的入口模块名
+    //   chunks: ["sub"],
 
-      // 压缩设置
-      minify: false, //默认生产环境压缩，开发环境不压缩
-    }),
+    //   // 压缩设置
+    //   minify: false, //默认生产环境压缩，开发环境不压缩
+    // }),
+    
+    // 打包友好提示
+    new FriendlyErrorsWebpackPlugin(),
     // css分割
     new MiniCssExtractPlugin({
       filename: devMode ? "[name].css" : "[name].[hash].css",
       chunkFilename: devMode ? "[id].css" : "[id].[hash].css",
     }),
     //vue模版渲染
-    new vueLoaderPlugin(),
-    //第三方包抽离
-    new Webpack.DllReferencePlugin({
-      context: __dirname,
-      //必须mainfest.json文件路径保持一致
-      manifest: require("../static/vendor-manifest.json"),
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
-        // 将抽离的第三方文件拷贝到压缩文档中
-        {
-          from: path.resolve(__dirname, "../static"),
-          to: path.resolve(__dirname, "../dist/static"),
-        },
-      ],
-    }),
+    // new vueLoaderPlugin(),
+    // 复制特定文件到指定文件夹下
+    // new CopyWebpackPlugin({
+    //   patterns: [
+    //     // 将抽离的第三方文件拷贝到压缩文档中
+    //     {
+    //       from: path.resolve(__dirname, "../static"),
+    //       to: path.resolve(__dirname, "../dist/static"),
+    //     },
+    //   ],
+    // }),
   ],
 
   // 不同类型的文件打包配置
@@ -118,64 +116,45 @@ module.exports = {
         include: path.resolve(__dirname, "src"),
       },
       //vue文件解析打包
-      {
-        test: /\.vue$/,
-        use: [
-          {
-            loader: "vue-loader",
-            options: {
-              compilerOptions: {
-                preserveWhitespace: false,
-              },
-            },
-            //减少loder搜索范围
-            // include: [path.resolve(__dirname, 'src')],
-            // exclude: '/node_modules/'
-          },
-        ],
-      },
+      // {
+      //   test: /\.vue$/,
+      //   use: [
+      //     {
+      //       loader: "vue-loader",
+      //       options: {
+      //         compilerOptions: {
+      //           preserveWhitespace: false,
+      //         },
+      //       },
+      //     },
+      //   ],
+      //   // 减少loder搜索范围
+      //   include: [path.resolve(__dirname, 'src')],
+      //   exclude: '/node_modules/'
+      // },
       // js转义 ES6及以上转为ES5，js解析打包
       {
-        include: [path.resolve(__dirname, "src")],
-        exclude: "/node_modules/",
-        test: /\.js$/,
-        use: [
-          "cache-loader",
-          {
-            loader: "babel-loader",
-            options: {
-              presets: [
-                "@babel/preset-env",
-                {
-                  useBuiltIns: "usage", //按需加载
-                  corejs: {
-                    version: "3",
-                  },
-                  targets: "defaults",
-                },
-              ],
-              // 开启babel缓存，第二次构建时，会读取之前的缓存。
-              cacheDirectory: true,
-            },
-          },
-        ],
+        test: /\.(jsx?|js)$/,
+        loader: 'babel-loader',
+        options: { cacheDirectory: true },
+        exclude: /node_modules/,
       },
       //css样式文件打包
       {
         test: /\.css$/,
         use: [
           {
-            loader: devMode ? "vue-style-loader" : MiniCssExtractPlugin.loader,
-            // options: {
-            //   publicPath: "../dist/css/",
-            //   hmr: devMode,
-            // },
+            loader: devMode ? "style-loader" : MiniCssExtractPlugin.loader,
           },
           "css-loader",
           {
             loader: "postcss-loader",
             options: {
-              plugins: [require("autoprefixer")],
+              postcssOptions: {
+                ident: "postcss",
+                // postcss-preset-env插件：帮postcss找到package.json中的browserslist配置，根据配置加载指定的兼容性样式      
+                plugins: [require("postcss-preset-env")()],
+              },
             },
           },
         ],
@@ -184,11 +163,7 @@ module.exports = {
         test: /\.less$/,
         use: [
           {
-            loader: devMode ? "vue-style-loader" : MiniCssExtractPlugin.loader,
-            // options: {
-            //   publicPath: "../dist/css/",
-            //   hmr: devMode,
-            // },
+            loader: devMode ? "style-loader" : MiniCssExtractPlugin.loader,
           },
           "css-loader",
           "less-loader",
@@ -257,11 +232,11 @@ module.exports = {
     ],
   },
   //vue文件处理
-  resolve: {
-    alias: {
-      vue$: "vue/dist/vue.runtime.esm.js",
-      " @": path.resolve(__dirname, "../src"),
-    },
-    extensions: ["*", ".js", ".json", "css", ".vue"],
-  },
+  // resolve: {
+  //   alias: {
+  //     vue$: "vue/dist/vue.runtime.esm.js",
+  //     " @": path.resolve(__dirname, "../src"),
+  //   },
+  //   extensions: ["*", ".js", ".json", "css", ".vue"],
+  // },
 };

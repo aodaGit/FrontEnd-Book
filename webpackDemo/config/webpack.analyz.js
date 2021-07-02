@@ -1,7 +1,6 @@
 //生产环境打包配置
 // webpack.analyz.js
 
-const path = require("path");
 const webpackConfig = require("./webpack.common.js");
 const WebpackMerge = require("webpack-merge");
 
@@ -21,10 +20,8 @@ const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = WebpackMerge.merge(
   webpackConfig,
-
   smp.wrap({
     mode: "production",
-    devtool: "cheap-module-source-map",
     plugins: [
       //分析依赖包大小
       new BundleAnalyzerPlugin(),
@@ -48,7 +45,14 @@ module.exports = WebpackMerge.merge(
             test: /[\\/]node_modules[\\/]/,
             priority: 10,
             chunks: "initial", // 只打包初始时依赖的第三方
+            minChunks: 2  //模块被引用2次以上的抽离
           },
+          vendors: {  //拆分第三方库（通过npm|yarn安装的库）
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            chunks: 'initial',
+            priority: -10
+          }
         },
       },
     },
