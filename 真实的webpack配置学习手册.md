@@ -52,10 +52,6 @@
   ```
 
 - ```js
-  npm install webpack-merge --save-dev  webpack打包文件合并，用于加载合并开发和生产打包文件
-  ```
-
-- ```js
   npm i babel-loader @babel/core @babel/preset-env -D  js的es6转换为es5兼容写法
   ```
 
@@ -78,6 +74,10 @@
 - ```js
    npm install @babel/preset-react -D  react文件打包支持  
   ```
+
+- ```
+   npm install friendly-errors-webpack-plugin --save-dev   webpack打包提示优化配置
+   ```
 
 - vue文件打包支持
 
@@ -548,10 +548,37 @@
     https://www.cnblogs.com/Jacob98/p/14458896.html
     ```
 
-
 ### react打包注意事项
 
-- 出现两次配置文件  删掉默认的配置，启用babelrc
+> 对于react项目的js，我们需要react的babel进行转义，才可正常打包react项目
+
+- ```js
+  {
+          test: /\.(jsx?|js)$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+              presets: ['@babel/preset-env','@babel/preset-react']
+            }
+          }
+        }
+  ```
+
+### postcss冲突
+
+> webpack5中的postcss与autofix会有版本冲突问题，报错内容
+>
+> 解决此问题可以升级postcss版本即可
+
+- ```
+  npm i --save autoprefixer@^10.0.2
+   npm i --save postcss@8.1.7 
+   npm i --save postcss-loader@4.0.4
+  ```
+
+  
 
 ### vue打包注意事项
 
