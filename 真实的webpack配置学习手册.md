@@ -553,6 +553,7 @@
 > 对于react项目的js，我们需要react的babel进行转义，才可正常打包react项目
 
 - ```js
+  //webpack。common.js 的module配置
   {
           test: /\.(jsx?|js)$/,
           exclude: /node_modules/,
