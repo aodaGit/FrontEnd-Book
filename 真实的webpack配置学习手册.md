@@ -75,6 +75,14 @@
    npm install @babel/preset-react -D  react文件打包支持  
   ```
 
+- ```js
+   npm i -D vue-loader vue-template-compiler vue-style-loader  vue文件打包支持
+   ```
+
+- ```
+   npm i -S vue  vue文件打包支持
+   ```
+
 - ```
    npm install friendly-errors-webpack-plugin --save-dev   webpack打包提示优化配置
    ```
