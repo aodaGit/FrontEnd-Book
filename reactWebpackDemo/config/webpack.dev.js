@@ -38,5 +38,8 @@ module.exports = WebpackMerge.merge(webpackConfig, {
     new Webpack.HotModuleReplacementPlugin(),
   ],
   // 热更新必须配这个！！！，不配不会热更新
-  target: 'web'
+  target: 'web',
+  resolve: {
+    extensions: [".js", ".jsx"], //引入文件自动识别为js或者jsx
+  },
 })
