@@ -470,10 +470,23 @@
       devtool:'cheap-module-eval-source-map',
     
       //设置代码热更新
-      devServer:{
-        port:3000,  //端口
-        hot:true,
-        contentBase:'../dist'  //热更新目录
+      devServer: {
+        open:true,
+        port: 3000, //端口
+        compress: true,    //是否启用gzip压缩
+        host: 'localhost',
+        // hot: true,
+        // host: '',   //特定域名启动 --host 0.0.28.26.
+        historyApiFallback: true,   //404特定页面
+        contentBase: '../dist/', //默认打开的目录
+        inline:true,    //实时刷新
+        proxy: {   //代理配置
+          // '/': 'http://localhost:3000',
+          "/api": {
+            target: "http://localhost:3000",
+            pathRewrite: { "^/api": "" }
+          }
+        },
       },
       plugins:[
           //设置热更新
@@ -550,17 +563,21 @@
 
   - ```js
     "scripts": {
-        "start": "cross-env NODE_ENV=development webpack-dev-server --open --config config/webpack.dev.js",
+        "start": "cross-env NODE_ENV=development webpack serve --inline --config config/webpack.dev.js",
         "build": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
-        "dll": "webpack --config config/webpack.dll.config.js",   //第三方库抽离
-      }
+        "analyz": "cross-env NODE_ENV=production webpack --config config/webpack.analyz.js"
+      },
     ```
 
-- 参考文档
 
-  - ```js
-    https://www.cnblogs.com/Jacob98/p/14458896.html
-    ```
+### 开发环境热更新问题
+
+> 开发环境中，我们期望在更改代码后，浏览器能够马上得到响应，不过webpack5中，不默认热更新,需要我们配置target的值
+
+- ```js
+  //与插件module等同级
+  target: 'web'
+  ```
 
 ### react打包注意事项
 

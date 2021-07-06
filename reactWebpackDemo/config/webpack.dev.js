@@ -15,21 +15,18 @@ module.exports = WebpackMerge.merge(webpackConfig, {
   stats: 'minimal',
   //设置代码sorce-map
   devtool: "inline-source-map",
-
   //设置代码热更新
   devServer: {
     open:true,
     port: 3000, //端口
-    // compress: true,    //是否启用gzip压缩
+    compress: true,    //是否启用gzip压缩
     host: 'localhost',
     hot: true,
     // host: '',   //特定域名启动 --host 0.0.28.26.
     historyApiFallback: true,   //404特定页面
     contentBase: '../dist/', //默认打开的目录
-    writeToDisk: true,   //读取缓存中的值
     inline:true,    //实时刷新
     proxy: {   //代理配置
-      // '/': 'http://localhost:3000',
       "/api": {
         target: "http://localhost:3000",
         pathRewrite: { "^/api": "" }
@@ -40,4 +37,6 @@ module.exports = WebpackMerge.merge(webpackConfig, {
     //设置热更新
     new Webpack.HotModuleReplacementPlugin(),
   ],
+  // 热更新必须配这个！！！，不配不会热更新
+  target: 'web'
 })

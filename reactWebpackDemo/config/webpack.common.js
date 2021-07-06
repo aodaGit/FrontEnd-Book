@@ -50,7 +50,7 @@ module.exports = {
     filename: "[name].[hash:8].js", // 根据入口文件，生成添加哈希值的动态出口文件
     path: path.resolve(__dirname, "../dist"), // 打包后的目录文佳夹
     // 打包时，在包中不包含所属模块的信息的注释
-    pathinfo: false
+    pathinfo: false,
   },
   //   与html相关的配置
   plugins: [
@@ -58,7 +58,7 @@ module.exports = {
     new CleanWebpackPlugin(),
 
     // 预编译所有模块到一个闭包中，提升代码在浏览器中的执行速度
-    new Webpack.optimize.ModuleConcatenationPlugin(),
+    // new Webpack.optimize.ModuleConcatenationPlugin(),
 
     new HtmlWebpackPlugin({
       // 打包基础路径
@@ -79,6 +79,7 @@ module.exports = {
     // 打包友好提示
     new FriendlyErrorsWebpackPlugin(),
 
+    // 打包进度条
     new ProgressBarPlugin(),
     // css分割
     new MiniCssExtractPlugin({
