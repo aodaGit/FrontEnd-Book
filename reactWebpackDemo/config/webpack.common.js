@@ -3,13 +3,16 @@
 //webpack实例
 const Webpack = require("webpack");
 
-//静态文件赋值
-// const CopyWebpackPlugin = require("copy-webpack-plugin");
+//静态文件复制
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const path = require("path");
 
 // html自动引入js
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+// 打包进度条
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
 // 清除上一次的打包缓存
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
@@ -60,9 +63,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       // 打包基础路径
       template: path.resolve(__dirname, "../public/index.html"),
-      
+
       // 指定js脚本存放的位置，头部还是脚部
       inject: "head",
+
+      // 指定生成的文件名称  慎用hash值，会使得打包无法检索
+      filename: "index.html",
 
       // 多入口时，对应的入口模块名
       // chunks: ["main"],
@@ -70,25 +76,10 @@ module.exports = {
       // 压缩设置
       minify: false, //默认生产环境压缩，开发环境不压缩
     }),
-    // new HtmlWebpackPlugin({
-    //   // 打包基础路径
-    //   template: path.resolve(__dirname, "../public/sub.html"),
-
-    //   // 指定生成的文件名称
-    //   filename: "sub.[hash:8].html",
-
-    //   // 指定js脚本存放的位置，头部还是脚部
-    //   inject: "head",
-
-    //   // 多入口时，对应的入口模块名
-    //   chunks: ["sub"],
-
-    //   // 压缩设置
-    //   minify: false, //默认生产环境压缩，开发环境不压缩
-    // }),
-    
     // 打包友好提示
     new FriendlyErrorsWebpackPlugin(),
+
+    new ProgressBarPlugin(),
     // css分割
     new MiniCssExtractPlugin({
       filename: devMode ? "[name].css" : "[name].[hash].css",
@@ -96,16 +87,20 @@ module.exports = {
     }),
     //vue模版渲染
     // new vueLoaderPlugin(),
+
     // 复制特定文件到指定文件夹下
-    // new CopyWebpackPlugin({
-    //   patterns: [
-    //     // 将抽离的第三方文件拷贝到压缩文档中
-    //     {
-    //       from: path.resolve(__dirname, "../static"),
-    //       to: path.resolve(__dirname, "../dist/static"),
-    //     },
-    //   ],
-    // }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "../public/favicon.ico"),
+          to: path.resolve(__dirname, "../dist/static"),
+        },
+        {
+          from: path.resolve(__dirname, "../public/manifest.json"),
+          to: path.resolve(__dirname, "../dist/static"),
+        },
+      ],
+    }),
   ],
 
   // 不同类型的文件打包配置
@@ -137,9 +132,16 @@ module.exports = {
       // js转义 ES6及以上转为ES5，js解析打包
       {
         test: /\.(jsx?|js)$/,
-        loader: 'babel-loader',
-        options: { cacheDirectory: true },
         exclude: /node_modules/,
+
+        use: {
+          loader: 'babel-loader',
+          options: {
+            babelrc: true,
+            cacheDirectory: true,
+            presets: ["@babel/preset-env", "@babel/preset-react"]
+          },
+        },
       },
       //css样式文件打包
       {

@@ -11,7 +11,7 @@
   ```
 
 - ```
-  npm i -D html-webpack-plugin   	html文件动态注入js
+  npm i --save-dev html-webpack-plugin   	html文件动态注入js
   ```
 
 - ```
@@ -71,6 +71,10 @@
   npm install webpack-bundle-analyzer --save-dev  分析打包内容
   ```
   
+- ```
+   npm i -D progress-bar-webpack-plugin  打包进度条
+   ```
+
 - ```js
    npm install @babel/preset-react -D  react文件打包支持  
   ```
@@ -404,6 +408,8 @@
 #### 第三方库打包抽离
 
 > webpack每次在打包项目时，会将项目使用的所有依赖全部打包，但是对于一些第三方库，没必要每次都去打包，因此，我们需要将其单独抽离出来，减少打包时间
+>
+> **~~webpack5打包性能已经非常优化，不建议使用此功能~~**
 
 - 与webpack.config.js同级的文件夹内，新建webpack.dll.js
 
