@@ -1,7 +1,7 @@
 //webpack基础配置
 
 //webpack实例
-// const Webpack = require("webpack");
+const Webpack = require("webpack");
 
 //静态文件赋值
 // const CopyWebpackPlugin = require("copy-webpack-plugin");
@@ -46,19 +46,21 @@ module.exports = {
   output: {
     filename: "[name].[hash:8].js", // 根据入口文件，生成添加哈希值的动态出口文件
     path: path.resolve(__dirname, "../dist"), // 打包后的目录文佳夹
+    // 打包时，在包中不包含所属模块的信息的注释
+    pathinfo: false
   },
   //   与html相关的配置
   plugins: [
     // 清除上一次的打包缓存
     new CleanWebpackPlugin(),
 
+    // 预编译所有模块到一个闭包中，提升代码在浏览器中的执行速度
+    new Webpack.optimize.ModuleConcatenationPlugin(),
+
     new HtmlWebpackPlugin({
       // 打包基础路径
       template: path.resolve(__dirname, "../public/index.html"),
-
-      // 指定生成的文件名称
-      filename: "index.[hash:8].html",
-
+      
       // 指定js脚本存放的位置，头部还是脚部
       inject: "head",
 
@@ -66,7 +68,7 @@ module.exports = {
       // chunks: ["main"],
 
       // 压缩设置
-      minify: false, //默认生产环境压缩，开发环境不压缩 
+      minify: false, //默认生产环境压缩，开发环境不压缩
     }),
     // new HtmlWebpackPlugin({
     //   // 打包基础路径
@@ -158,6 +160,7 @@ module.exports = {
             },
           },
         ],
+        exclude: /node_modules/,
       },
       {
         test: /\.less$/,
@@ -174,6 +177,7 @@ module.exports = {
             },
           },
         ],
+        exclude: /node_modules/,
       },
       //图片打包
       {
