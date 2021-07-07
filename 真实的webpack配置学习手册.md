@@ -87,13 +87,17 @@
    npm i -S vue  vue文件打包支持
    ```
 
-- ```
+- ```js
    npm install friendly-errors-webpack-plugin --save-dev   webpack打包提示优化配置
+   ```
+
+- ```
+   npm i  thread-loader -D   //多进程打包，开销较大，慎用
    ```
 
 - vue文件打包支持
 
-### webpack模块配置
+### webpack基础配置
 
 #### mode
 
@@ -405,45 +409,6 @@
       }
   ```
 
-#### 第三方库打包抽离
-
-> webpack每次在打包项目时，会将项目使用的所有依赖全部打包，但是对于一些第三方库，没必要每次都去打包，因此，我们需要将其单独抽离出来，减少打包时间
->
-> **~~webpack5打包性能已经非常优化，不建议使用此功能~~**
-
-- 与webpack.config.js同级的文件夹内，新建webpack.dll.js
-
-- webpack.dll.js
-
-  - ```js
-    // 第三方依赖包抽离
-    const path = require("path");
-    const webpack = require("webpack");
-    module.exports = {
-        entry: {
-            // 想要抽离的第三方包
-            vendor: ['vue']
-        },
-        output: {
-            path: path.resolve(__dirname, '../static'), // 打包后文件输出的位置
-            filename: '[name].dll.js',
-            library: '[name]_library'
-            // 这里需要和webpack.DllPlugin中的`name: '[name]_library',`保持一致。
-        },
-        plugins: [
-            new webpack.DllPlugin({
-                //生成的mainfest文件路径
-                path: path.resolve(__dirname, '../static/[name]-manifest.json'),
-                name: '[name]_library',
-                context: __dirname
-            })
-        ]
-    };
-    
-    ```
-
-    
-
 #### 不同环境webpack配置
 
 > 理想状态下，我们期望能够通过设置不同的环境变量，提供不同的base_url。同时运行不同的打包命令
@@ -569,8 +534,7 @@
       },
     ```
 
-
-### 开发环境热更新问题
+#### 开发环境热更新问题
 
 > 开发环境中，我们期望在更改代码后，浏览器能够马上得到响应，不过webpack5中，不默认热更新,需要我们配置target的值
 
@@ -579,7 +543,7 @@
   target: 'web'
   ```
 
-### react打包注意事项
+#### react打包注意事项
 
 > 对于react项目的js，我们需要react的babel进行转义，才可正常打包react项目
 
@@ -598,7 +562,7 @@
         }
   ```
 
-### postcss冲突
+#### postcss冲突
 
 > webpack5中的postcss与autofix会有版本冲突问题，报错内容
 >
@@ -610,11 +574,32 @@
    npm i --save postcss-loader@4.0.4
   ```
 
-  
 
-### vue打包注意事项
+#### vue打包注意事项
+
+### 配置优化
 
 
+
+
+
+
+
+基础库分离   ⽤ html-webpackexternals-plugin
+
+动态导入第三方公共分离代码    npm install @babel/plugin-syntax-dynamic-import --save-dev   "plugins": ["@babel/plugin-syntax-dynamic-import"
+
+eslit代码规范检查    test: /\.js$/, exclude: /node_modules/, use: [ "babel-loader", + "eslint-loader”
+
+
+
+使用 thread-loader 解析资源   多进程打包
+
+
+
+置 image-webpack-loader     图片压缩配置
+
+babel-polfill-runtime 弃用  不适用业务环境     如何实现动态polifill
 
 
 

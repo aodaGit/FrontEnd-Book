@@ -26,16 +26,11 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // 命令行提示美化
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
-//当前开发环境
+//判断开发环境是否为开发环境
 const devMode = process.argv.indexOf("--mode=production") === -1;
 
 module.exports = {
-  // 环境切换
-  // mode: "development", // 默认生产模式
-  // mode: "production", // 默认生产模式
-
   // 入口文件设置
-
   // 单文件入口
   entry: path.resolve(__dirname, "../src/index.js"),
 
@@ -81,10 +76,11 @@ module.exports = {
 
     // 打包进度条
     new ProgressBarPlugin(),
-    // css分割
+
+    // 从js中提取css
     new MiniCssExtractPlugin({
-      filename: devMode ? "[name].css" : "[name].[contenthash].css",
-      chunkFilename: devMode ? "[id].css" : "[id].[contenthash].css",
+      filename: devMode ? "[name].css" : "[name].[contenthash:8].css",
+      chunkFilename: devMode ? "[id].css" : "[id].[contenthash:8].css",
     }),
     //vue模版渲染
     // new vueLoaderPlugin(),
@@ -107,6 +103,41 @@ module.exports = {
   // 不同类型的文件打包配置
   module: {
     rules: [
+      // js转义 ES6及以上转为ES5，js解析打包
+      {
+        test: /\.(jsx?|js)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'thread-loader',
+            options: {
+              workers: 2 // 进程数量 2个
+            }
+          },
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                [
+                  '@babel/preset-env',
+                  "@babel/preset-react",
+                  {
+                    useBuiltIns: 'usage',
+                    corejs: { version: 3 },
+                    targets: {
+                      chrome: '60',
+                      firefox: '50'
+                    }
+                  }
+                ]
+              ],
+              // 开启babel缓存
+              // 第二次构建时，会读取之前的缓存
+              cacheDirectory: true
+            }
+          }
+        ]
+      },
       //打包缓存配置
       {
         test: /\.ext$/,
@@ -130,20 +161,7 @@ module.exports = {
       //   include: [path.resolve(__dirname, 'src')],
       //   exclude: '/node_modules/'
       // },
-      // js转义 ES6及以上转为ES5，js解析打包
-      {
-        test: /\.(jsx?|js)$/,
-        exclude: /node_modules/,
 
-        use: {
-          loader: 'babel-loader',
-          options: {
-            babelrc: true,
-            cacheDirectory: true,
-            presets: ["@babel/preset-env", "@babel/preset-react"]
-          },
-        },
-      },
       //css样式文件打包
       {
         test: /\.css$/,
@@ -237,6 +255,12 @@ module.exports = {
         ],
       },
     ],
+  },
+
+  // CDN引入第三方包
+  externals: {
+    React: "React",  //属性为包名，值为项目中使用的命名
+    ReactDOM: "ReactDOM"
   },
   //vue文件处理
   // resolve: {
