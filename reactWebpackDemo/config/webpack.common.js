@@ -47,7 +47,7 @@ module.exports = {
 
   //   出口文件设置
   output: {
-    filename: "[name].[hash:8].js", // 根据入口文件，生成添加哈希值的动态出口文件
+    filename: "[name].[chunkhash:8].js", // 根据入口文件，生成添加哈希值的动态出口文件
     path: path.resolve(__dirname, "../dist"), // 打包后的目录文佳夹
     // 打包时，在包中不包含所属模块的信息的注释
     pathinfo: false,
@@ -83,8 +83,8 @@ module.exports = {
     new ProgressBarPlugin(),
     // css分割
     new MiniCssExtractPlugin({
-      filename: devMode ? "[name].css" : "[name].[hash].css",
-      chunkFilename: devMode ? "[id].css" : "[id].[hash].css",
+      filename: devMode ? "[name].css" : "[name].[contenthash].css",
+      chunkFilename: devMode ? "[id].css" : "[id].[contenthash].css",
     }),
     //vue模版渲染
     // new vueLoaderPlugin(),
