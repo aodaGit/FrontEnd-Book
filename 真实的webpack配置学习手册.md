@@ -27,14 +27,13 @@
   ```
 
 - ```
-  npm i -D postcss-loader autoprefixer      css自动添加不同浏览器前缀
+  npm i postcss-loader postcss-preset-env -D      css自动添加不同浏览器前缀
   ```
 
 - ```
   npm i -D mini-css-extract-plugin    拆分css文件
-  npm i -D extract-text-webpack-plugin@next  新版本拆分css文件
   ```
-
+  
 - ```
   npm i -D webpack-dev-server  热更新
   ```
@@ -52,11 +51,7 @@
   ```
 
 - ```js
-  npm i babel-loader @babel/core @babel/preset-env -D  js的es6转换为es5兼容写法
-  ```
-
-- ```js
-  npm install --save @babel/plugin-transform-runtime  @babel/runtime-corejs3  部分浏览器不支持的写法使用polyfill进行模拟
+  npm install -D  @babel/plugin-transform-runtime  @babel/runtime-corejs3  @babel/preset-env js的es6转换为es5兼容写法以及部分浏览器不支持的写法使用polyfill进行模拟
   ```
 
 - ```
@@ -134,26 +129,6 @@
           path: path.resolve(__dirname, "../dist"), // 打包后的目录文佳夹
         },
     ```
-
-#### devServer热更新
-
-> 实际开发过程中，我们希望代码在改动后，浏览器能够自动更新渲染，并且对于跨域请求可以进行代理，此插件可以做到热更新效果
-
-- ```js
-  devServer:{
-      port:3000,  //端口
-      hot:true,
-      contentBase:'../dist',  //热更新目录
-      proxy: {   //代理配置
-    "/api": {
-      target: "http://localhost:3000",
-      pathRewrite: {"^/api" : ""}
-    }
-  }
-    },
-  ```
-
-  
 
 #### plugins插件
 
@@ -243,144 +218,162 @@
 > webpack本身只能打包js一种类别的文件，对于css，图片，字体等文件，需要提供不同的loader加载器进行解析打包
 
 - ```js
-  // 不同类型的文件打包配置
-      module: {
-        // include  那些文件需要被loader执行
-        // exclude 那些文件不需要被loader执行
-        rules: [
-          //打包缓存配置
-          {
-            test: /\.ext$/,
-            use: [
-              'cache-loader',
-            ],
-            include: path.resolve(__dirname, 'src'),
-            exclude: /node_modules/
-          },
-          //vue文件解析打包
-          {
-            test: /\.vue$/,
-            use: [{
-              loader: 'vue-loader',
-              options: {
-                compilerOptions: {
-                  preserveWhitespace: false
-                }
-              },
-            }],
-            //减少loder搜索范围
-            include: [path.resolve(__dirname, 'src')],
-            exclude: /node_modules/
-          },
-          // js转义 ES6及以上转为ES5，js解析打包
-          {
-            include: [path.resolve(__dirname, 'src')],
-            exclude: '/node_modules/',
-            test: /\.js$/,
-            use: [
-               "cache-loader",
-              {
-                loader: "babel-loader",
-                options: {
-                  presets: ["@babel/preset-env", {
-                    useBuiltIns: "usage", //按需加载
-                    corejs: {
-                      version: "3",
-                    },
-                    targets: "defaults",
-                  }],
-                  // 开启babel缓存，第二次构建时，会读取之前的缓存。
-                  cacheDirectory: true,
-                }
-              }
-  
-            ]
-          },
-          //css样式文件打包
-          {
-            test: /\.css$/,
-            use: [{
-              loader: devMode ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
-              options: {
-                publicPath: "../dist/css/",
-                hmr: devMode
-              }
-            }, 'css-loader', {
-              loader: 'postcss-loader',
-              options: {
-                plugins: [require('autoprefixer')]
-              }
-            }],
-            exclude: /node_modules/
-          },
-          {
-            test: /\.less$/,
-            use: [{
-              loader: devMode ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
-              options: {
-                publicPath: "../dist/css/",
-                hmr: devMode
-              }
-            }, 'css-loader', 'less-loader', {
-              loader: 'postcss-loader',
-              options: {
-                plugins: [require('autoprefixer')]
-              }
-            }]
-          },
-          //图片打包
-          {
-            //处理图片资源
-            test: /\.(jpg|jpg|png|gif|)$/,
-            type: "asset",
-            generator: {
-              // 输出文件位置以及文件名
-              filename: "images/[name][ext]"
-            },
-            parser: {
-              dataUrlCondition: {
-                maxSize: 10 * 1024 //超过10kb不转base64
-              }
-            }
-          },
-          // 媒体文件打包
-          {
-            test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/, //媒体文件
-            use: [
-              {
-                loader: 'url-loader',
-                options: {
-                  limit: 10240,
-                  fallback: {
-                    loader: 'file-loader',
-                    options: {
-                      name: 'media/[name].[hash:8].[ext]'
-                    }
-                  }
-                }
-              }
-            ]
-          },
-          // 字体文件打包
-          {
-            test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i, // 字体
-            use: [
-              {
-                loader: 'url-loader',
-                options: {
-                  limit: 10240,
-                  fallback: {
-                    loader: 'file-loader',
-                    options: {
-                      name: 'fonts/[name].[hash:8].[ext]'
-                    }
-                  }
-                }
-              }
-            ]
-          },
-        ]
-      },
+    module: {
+       rules: [
+         //打包缓存配置
+         {
+           test: /\.ext$/,
+           use: ["cache-loader"],
+           include: path.resolve(__dirname, "src"),
+         },
+         //vue文件解析打包
+         // {
+         //   test: /\.vue$/,
+         //   use: [
+         //     {
+         //       loader: "vue-loader",
+         //       options: {
+         //         compilerOptions: {
+         //           preserveWhitespace: false,
+         //         },
+         //       },
+         //     },
+         //   ],
+         //   // 减少loder搜索范围
+         //   include: [path.resolve(__dirname, 'src')],
+         //   exclude: '/node_modules/'
+         // },
+         // js转义 ES6及以上转为ES5，js解析打包
+         {
+           test: /\.(tsx?|js)$/,
+           exclude: /node_modules/,
+           use: {
+             loader: 'babel-loader',
+             options: {
+               cacheDirectory: true,
+               presets: [
+                 "@babel/preset-react",
+                 [
+                   "@babel/preset-env",
+                   {
+                     targets: {
+                       edge: "17",
+                       firefox: "60",
+                       chrome: "67",
+                       safari: "11.1"
+                     },
+                     corejs: {
+                       version: "3",
+                     },//新版本需要指定核⼼库版本
+                     modules: false, // 推荐
+                     useBuiltIns: "usage"//按需注⼊
+                   }
+                 ],
+   
+               ],
+               plugins: [
+                 [
+                   "@babel/plugin-transform-runtime",
+                   {
+                     "corejs": 3 // 指定 runtime-corejs 版本，目前3为最新版本
+                   }
+                 ]
+               ]
+             },
+           }
+         },
+         //css样式文件打包
+         {
+           test: /\.css$/,
+           use: [
+             {
+               loader: devMode ? "style-loader" : MiniCssExtractPlugin.loader,
+             },
+             {
+               loader: 'css-loader',
+               options: {
+                 modules: true,   //css-module
+                 importLoaders: 1,
+                 localIdentName: "[name]__[local]___[hash:base64:5]"     //5位哈希命名
+               },
+             },
+             {
+               loader: "postcss-loader",
+               options: {
+                 postcssOptions: {
+                   plugins: [
+                     require("postcss-preset-env")(),
+                   ]
+                 }
+               }
+             },
+           ],
+         },
+         {
+           test: /\.less$/,
+           use: [
+             {
+               loader: devMode ? "style-loader" : MiniCssExtractPlugin.loader,
+             },
+             {
+               loader: 'css-loader',
+               options: {
+                 modules: true,   //css-module
+                 importLoaders: 1,
+               },
+             },
+             "less-loader",
+             {
+               loader: "postcss-loader",
+               options: {
+                 postcssOptions: {
+                   plugins: [
+                     require("postcss-preset-env")()
+                   ]
+                 }
+               }
+             },
+           ],
+         },
+         //图片打包
+         {
+           test: /\.(jpg|png|gif|svg)$/,
+           type: "asset",
+           generator: {
+             // 输出文件位置以及文件名
+             filename: "images/[name].[hash:6][ext]"
+           },
+           parser: {
+             dataUrlCondition: {
+               maxSize: 10 * 1024 //超过10kb不转base64
+             }
+           }
+         },
+         // 媒体文件打包
+         {
+           test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/, //媒体文件
+           type: "asset",
+           generator: {
+             // 输出文件位置以及文件名
+             filename: "media/[name].[hash:6][ext]"
+           },
+           parser: {
+             dataUrlCondition: {
+               maxSize: 10 * 1024 //超过10kb不转base64
+             }
+           }
+         },
+         // 字体文件打包
+         {
+           test: /\.(eot|ttf|woff|)$/, // 字体
+           type: "asset/resource",
+           generator: {
+             // 输出文件位置以及文件名
+             filename: "fonts/[name].[hash:6][ext]"
+           }
+         },
+       ],
+     },
   ```
 
 
@@ -389,24 +382,41 @@
 > webpack在打包中，能够使用babel对高版本js转换为低版本，从而提供兼容处理，但也有部分功能在低版本浏览器无法实现，使用polyfill可以对低版本的浏览器进行垫片填充，从而实现相对应的功能
 
 - ```js
-  options: {
-        presets: [
-          [
-            "@babel/preset-env",
-            {
-              targets: {
-                edge: "17",
-                firefox: "60",
-                chrome: "67",
-                safari: "11.1"
-              },
-              corejs: 2,//新版本需要指定核⼼库版本
-              modules: false, // 推荐
-              useBuiltIns: "usage"//按需注⼊
-            }
-          ]
-        ]
-      }
+  {
+          test: /\.(jsx?|js)$/,
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true,
+            presets: [
+              [
+                "@babel/preset-react",
+                "@babel/preset-env",
+                {
+                  targets: {
+                    edge: "17",
+                    firefox: "60",
+                    chrome: "67",
+                    safari: "11.1"
+                  },
+                  corejs: {
+                    version: "3",
+                  },//新版本需要指定核⼼库版本
+                  modules: false, // 推荐
+                  useBuiltIns: "usage"//按需注⼊
+                }
+              ]
+            ],
+            plugins: [
+              [
+                "@babel/plugin-transform-runtime",
+                {
+                  "corejs": 3 // 指定 runtime-corejs 版本，目前3为最新版本
+                }
+              ]
+            ]
+          },
+          exclude: /node_modules/,
+        
   ```
 
 #### 不同环境webpack配置
@@ -422,17 +432,21 @@
   - ```js
     //开发环境打包配置
     // webpack.dev.js
+    const path = require('path')
+    
     const Webpack = require('webpack')
+    
     //引入基础打包配置
-    const webpackConfig = require('./webpack.config.js')
+    const webpackConfig = require('./webpack.common.js')
     
     //合并打包配置
     const WebpackMerge = require('webpack-merge')
     
-    module.exports = WebpackMerge(webpackConfig,{
-      mode:'development',
+    module.exports = WebpackMerge.merge(webpackConfig, {
+      mode: "development",
+      stats: 'minimal',
       //设置代码sorce-map
-      devtool:'cheap-module-eval-source-map',
+      devtool: "inline-source-map",
     
       //设置代码热更新
       devServer: {
@@ -440,23 +454,23 @@
         port: 3000, //端口
         compress: true,    //是否启用gzip压缩
         host: 'localhost',
-        // hot: true,
+        // publicPath: '/',
+        hot: true,
         // host: '',   //特定域名启动 --host 0.0.28.26.
-        historyApiFallback: true,   //404特定页面
-        contentBase: '../dist/', //默认打开的目录
+        // historyApiFallback:"",   //404特定页面  
+        contentBase: path.resolve(__dirname, "../public"), //默认打开的目录
         inline:true,    //实时刷新
-        proxy: {   //代理配置
-          // '/': 'http://localhost:3000',
-          "/api": {
-            target: "http://localhost:3000",
-            pathRewrite: { "^/api": "" }
-          }
-        },
+        // proxy: {   //代理配置
+        //   "/api": {
+        //     target: "http://localhost:3000",
+        //     pathRewrite: { "^/api": "" }
+        //   }
+        // },
       },
-      plugins:[
-          //设置热更新
-        new Webpack.HotModuleReplacementPlugin()
-      ]
+      plugins: [
+        //设置热更新
+        new Webpack.HotModuleReplacementPlugin(),
+      ],
     })
     
     ```
@@ -543,24 +557,48 @@
   target: 'web'
   ```
 
-#### react打包注意事项
+#### 上线环境代码压缩
 
-> 对于react项目的js，我们需要react的babel进行转义，才可正常打包react项目
+> 上线环境中，我们期望代码能够压缩，减小打包体积
 
 - ```js
-  //webpack。common.js 的module配置
-  {
-          test: /\.(jsx?|js)$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              cacheDirectory: true,
-              presets: ['@babel/preset-env','@babel/preset-react']
-            }
+   optimization: {
+      minimizer: [
+        //js压缩
+        new UglifyJsPlugin({
+          cache: true,
+          parallel: true,
+          sourceMap: true,
+        }),
+        //css压缩
+        new OptimizeCssAssetsPlugin({}),
+      ],
+      splitChunks: {
+        chunks: "all",
+        cacheGroups: {
+          libs: {
+            name: "chunk-libs",
+            test: /[\\/]node_modules[\\/]/,
+            priority: 10,
+            chunks: "initial", // 只打包初始时依赖的第三方
+            minChunks: 2  //模块被引用2次以上的抽离
+          },
+          vendors: {  //拆分第三方库（通过npm|yarn安装的库）
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            chunks: 'initial',
+            priority: -10
           }
-        }
+        },
+      },
+    },
   ```
+
+  
+
+
+
+
 
 #### postcss冲突
 
