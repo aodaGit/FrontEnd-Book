@@ -218,7 +218,7 @@
 > webpack本身只能打包js一种类别的文件，对于css，图片，字体等文件，需要提供不同的loader加载器进行解析打包
 
 - ```js
-    module: {
+   module: {
        rules: [
          //打包缓存配置
          {
@@ -283,32 +283,32 @@
            }
          },
          //css样式文件打包
-         {
-           test: /\.css$/,
-           use: [
-             {
-               loader: devMode ? "style-loader" : MiniCssExtractPlugin.loader,
-             },
-             {
-               loader: 'css-loader',
-               options: {
-                 modules: true,   //css-module
-                 importLoaders: 1,
-                 localIdentName: "[name]__[local]___[hash:base64:5]"     //5位哈希命名
-               },
-             },
-             {
-               loader: "postcss-loader",
-               options: {
-                 postcssOptions: {
-                   plugins: [
-                     require("postcss-preset-env")(),
-                   ]
-                 }
-               }
-             },
-           ],
-         },
+         // {
+         //   test: /\.css$/,
+         //   use: [
+         //     {
+         //       loader: devMode ? "style-loader" : MiniCssExtractPlugin.loader,
+         //     },
+         //     {
+         //       loader: 'css-loader',
+         //       options: {
+         //         modules: true,   //css-module
+         //         importLoaders: 1,
+         //         localIdentName: "[name]__[local]___[hash:base64:5]"     //5位哈希命名
+         //       },
+         //     },
+         //     {
+         //       loader: "postcss-loader",
+         //       options: {
+         //         postcssOptions: {
+         //           plugins: [
+         //             require("postcss-preset-env")(),
+         //           ]
+         //         }
+         //       }
+         //     },
+         //   ],
+         // },
          {
            test: /\.less$/,
            use: [
@@ -318,8 +318,10 @@
              {
                loader: 'css-loader',
                options: {
-                 modules: true,   //css-module
-                 importLoaders: 1,
+                 modules: {   //css-module
+                   localIdentName: "[name]__[local]___[hash:base64:5]"     //5位哈希命名
+                 },
+                 // importLoaders: 1,
                },
              },
              "less-loader",
@@ -372,8 +374,8 @@
              filename: "fonts/[name].[hash:6][ext]"
            }
          },
-       ],
-     },
+      ],
+    },
   ```
 
 
