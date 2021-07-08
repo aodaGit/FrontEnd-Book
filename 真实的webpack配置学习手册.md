@@ -7,7 +7,7 @@
 > 配置webpack打包前，先安装webapck打包的对应依赖包
 
 - ```js
-  npm i -D webpack webpack-cli     webpack基础打包脚手架
+  npm i -D webpack@latst webpack-cli@last     webpack5基础打包脚手架
   ```
 
 - ```
@@ -42,10 +42,6 @@
   npm i -D  webpack-merge copy-webpack-plugin optimize-css-assets-webpack-plugin uglifyjs-webpack-plugin   webpack合并  静态文件复制  css压缩  js压缩
   ```
 
-- ```
-  npm i -D webpack-parallel-uglify-plugin    增强压缩
-  ```
-
 - ```js
   npm i -D cache-loader  打包缓存配置
   ```
@@ -76,10 +72,6 @@
 
 - ```js
    npm i -D vue-loader vue-template-compiler vue-style-loader  vue文件打包支持
-   ```
-
-- ```
-   npm i -S vue  vue文件打包支持
    ```
 
 - ```js
