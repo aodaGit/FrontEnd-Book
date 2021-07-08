@@ -23,6 +23,9 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // 命令行提示美化
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
+// 打包进度
+const ProgressBarWebpackPlugin = require('progress-bar-webpack-plugin')
+
 //当前开发环境
 const devMode = process.argv.indexOf("--mode=production") === -1;
 
@@ -84,9 +87,14 @@ module.exports = {
     //   // 压缩设置
     //   minify: false, //默认生产环境压缩，开发环境不压缩
     // }),
-    
+
     // 打包友好提示
     new FriendlyErrorsWebpackPlugin(),
+
+    // 打包进度提示
+    new ProgressBarWebpackPlugin(),
+
+
     // css分割
     new MiniCssExtractPlugin({
       filename: devMode ? "[name].css" : "[name].[hash].css",
@@ -134,102 +142,147 @@ module.exports = {
       // },
       // js转义 ES6及以上转为ES5，js解析打包
       {
-        test: /\.(jsx?|js)$/,
-        loader: 'babel-loader',
-        options: { cacheDirectory: true },
+        test: /\.(tsx?|js)$/,
         exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true,
+            presets: [
+              "@babel/preset-react",
+              [
+                "@babel/preset-env",
+                {
+                  targets: {
+                    edge: "17",
+                    firefox: "60",
+                    chrome: "67",
+                    safari: "11.1"
+                  },
+                  corejs: {
+                    version: "3",
+                  },//新版本需要指定核⼼库版本
+                  modules: false, // 推荐
+                  useBuiltIns: "usage"//按需注⼊
+                }
+              ],
+
+            ],
+            plugins: [
+              [
+                "@babel/plugin-transform-runtime",
+                {
+                  "corejs": 3 // 指定 runtime-corejs 版本，目前3为最新版本
+                }
+              ]
+            ]
+          },
+        }
       },
       //css样式文件打包
-      {
-        test: /\.css$/,
-        use: [
-          {
-            loader: devMode ? "style-loader" : MiniCssExtractPlugin.loader,
-          },
-          "css-loader",
-          {
-            loader: "postcss-loader",
-            options: {
-              postcssOptions: {
-                ident: "postcss",
-                // postcss-preset-env插件：帮postcss找到package.json中的browserslist配置，根据配置加载指定的兼容性样式      
-                plugins: [require("postcss-preset-env")()],
-              },
-            },
-          },
-        ],
-      },
+      // {
+      //   test: /\.css$/,
+      //   use: [
+      //     {
+      //       loader: devMode ? "style-loader" : MiniCssExtractPlugin.loader,
+      //     },
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         modules: true,   //css-module
+      //         importLoaders: 1,
+      //         localIdentName: "[name]__[local]___[hash:base64:5]"     //5位哈希命名
+      //       },
+      //     },
+      //     {
+      //       loader: "postcss-loader",
+      //       options: {
+      //         postcssOptions: {
+      //           plugins: [
+      //             require("postcss-preset-env")(),
+      //           ]
+      //         }
+      //       }
+      //     },
+      //   ],
+      // },
       {
         test: /\.less$/,
         use: [
           {
             loader: devMode ? "style-loader" : MiniCssExtractPlugin.loader,
           },
-          "css-loader",
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {   //css-module
+                localIdentName: "[name]__[local]___[hash:base64:5]"     //5位哈希命名
+              },
+              // importLoaders: 1,
+            },
+          },
           "less-loader",
           {
             loader: "postcss-loader",
             options: {
-              plugins: [require("autoprefixer")],
-            },
+              postcssOptions: {
+                plugins: [
+                  require("postcss-preset-env")()
+                ]
+              }
+            }
           },
         ],
       },
       //图片打包
       {
-        test: /\.(jpe?g|png|gif)$/i,
-        use: [
-          {
-            loader: "url-loader", //url-load与file-loa配置使用，小于限制大小，转为base64，大于后，直接输出到相关文件目录中
-            options: {
-              limit: 10240,
-              fallback: {
-                loader: "file-loader",
-                options: {
-                  name: "img/[name].[hash:8].[ext]",
-                },
-              },
-            },
-          },
-        ],
+        test: /\.(jpg|png|gif|svg)$/,
+        type: "asset",
+        generator: {
+          // 输出文件位置以及文件名
+          filename: "images/[name].[hash:6][ext]"
+        },
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10 * 1024 //超过10kb不转base64
+          }
+        }
       },
       // 媒体文件打包
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/, //媒体文件
-        use: [
-          {
-            loader: "url-loader",
-            options: {
-              limit: 10240,
-              fallback: {
-                loader: "file-loader",
-                options: {
-                  name: "media/[name].[hash:8].[ext]",
-                },
-              },
-            },
-          },
-        ],
+        type: "asset",
+        generator: {
+          // 输出文件位置以及文件名
+          filename: "media/[name].[hash:6][ext]"
+        },
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10 * 1024 //超过10kb不转base64
+          }
+        }
       },
       // 字体文件打包
       {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i, // 字体
-        use: [
-          {
-            loader: "url-loader",
-            options: {
-              limit: 10240,
-              fallback: {
-                loader: "file-loader",
-                options: {
-                  name: "fonts/[name].[hash:8].[ext]",
-                },
-              },
-            },
-          },
-        ],
+        test: /\.(eot|ttf|woff|)$/, // 字体
+        type: "asset/resource",
+        generator: {
+          // 输出文件位置以及文件名
+          filename: "fonts/[name].[hash:6][ext]"
+        }
       },
     ],
+  },
+  // CDN引入第三方包
+  externals: {
+    "react": "React",  //属性为包名，值为项目中使用的命名
+    "react-dom": "ReactDOM",
+    "moment": "moment",
+    lodash: {
+      commonjs: "lodash",
+      amd: "lodash",
+      root: "_"
+    }
   },
   //vue文件处理
   // resolve: {
