@@ -47,7 +47,7 @@ module.exports = {
 
   //   出口文件设置
   output: {
-    filename: "[name].[hash:8].js", // 根据入口文件，生成添加哈希值的动态出口文件
+    filename: "[name].[chunkhash:8].js", // 根据入口文件，生成添加哈希值的动态出口文件
     path: path.resolve(__dirname, "../dist"), // 打包后的目录文佳夹
   },
   //   与html相关的配置
@@ -60,7 +60,7 @@ module.exports = {
       template: path.resolve(__dirname, "../public/index.html"),
 
       // 指定生成的文件名称
-      filename: "index.[hash:8].html",
+      filename: "index.[chunkhash:8].html",
 
       // 指定js脚本存放的位置，头部还是脚部
       inject: "head",
@@ -69,7 +69,10 @@ module.exports = {
       // chunks: ["main"],
 
       // 压缩设置
-      minify: false, //默认生产环境压缩，开发环境不压缩 
+      minify: {
+        removeComments: true,//移除HTML中的注释
+        collapseWhitespace: true //删除空白符与换行符
+      }
     }),
     // new HtmlWebpackPlugin({
     //   // 打包基础路径
@@ -89,7 +92,12 @@ module.exports = {
     // }),
 
     // 打包友好提示
-    new FriendlyErrorsWebpackPlugin(),
+    new FriendlyErrorsWebpackPlugin({
+      compilationSuccessInfo: {
+        messages: ["项目正在打包，请稍等..."],
+      },
+      clearConsole: true,
+    }),
 
     // 打包进度提示
     new ProgressBarWebpackPlugin(),
@@ -97,8 +105,8 @@ module.exports = {
 
     // css分割
     new MiniCssExtractPlugin({
-      filename: devMode ? "[name].css" : "[name].[hash].css",
-      chunkFilename: devMode ? "[id].css" : "[id].[hash].css",
+      filename: devMode ? "[name].css" : "[name].[contenthash].css",
+      chunkFilename: devMode ? "[id].css" : "[id].[contenthash].css",
     }),
     //vue模版渲染
     // new vueLoaderPlugin(),
@@ -140,44 +148,77 @@ module.exports = {
       //   include: [path.resolve(__dirname, 'src')],
       //   exclude: '/node_modules/'
       // },
+
       // js转义 ES6及以上转为ES5，js解析打包
       {
-        test: /\.(tsx?|js)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
-            presets: [
-              "@babel/preset-react",
-              [
-                "@babel/preset-env",
-                {
-                  targets: {
-                    edge: "17",
-                    firefox: "60",
-                    chrome: "67",
-                    safari: "11.1"
-                  },
-                  corejs: {
-                    version: "3",
-                  },//新版本需要指定核⼼库版本
-                  modules: false, // 推荐
-                  useBuiltIns: "usage"//按需注⼊
-                }
-              ],
+        test: /\.jsx?$/,
+        include: [
+          path.resolve(__dirname, "../src"),
+          path.resolve(__dirname, "../node_modules/@yulintu/")
+        ],
+        use: [
+          {
+            loader: "thread-loader",
+            options: {
+              // 产生的 worker 的数量，默认是 (cpu 核心数 - 1)，或者，
+              workers: 2,
+              workerParallelJobs: 50,
 
-            ],
-            plugins: [
-              [
-                "@babel/plugin-transform-runtime",
-                {
-                  "corejs": 3 // 指定 runtime-corejs 版本，目前3为最新版本
-                }
-              ]
-            ]
+              // 额外的 node.js 参数
+              workerNodeArgs: ['--max-old-space-size=1024'],
+              poolRespawn: false,
+
+              // 闲置时定时删除 worker 进程
+              // 默认为 500（ms）
+              // 可以设置为无穷大，这样在监视模式(--watch)下可以保持 worker 持续存在
+              poolTimeout: 2000,
+
+              // 池分配给 worker 的工作数量
+              // 默认为 200
+              // 降低这个数值会降低总体的效率，但是会提升工作分布更均一
+              poolParallelJobs: 50,
+              name: "my-pool"
+            },
           },
-        }
+          {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+              presets: [
+                "@babel/preset-react",
+                [
+                  "@babel/preset-env",
+                  {
+                    targets: {
+                      edge: "17",
+                      firefox: "60",
+                      chrome: "67",
+                      safari: "11.1"
+                    },
+                    corejs: {
+                      version: "3",
+                    },//新版本需要指定核⼼库版本
+                    modules: "umd", // 推荐
+                    useBuiltIns: "usage"//按需注⼊
+                  }
+                ],
+
+              ],
+              plugins: [
+                ["@babel/plugin-proposal-class-properties", { "loose": true }],
+                ["@babel/plugin-proposal-private-methods", { "loose": true }],
+                [
+                  "@babel/plugin-transform-runtime",
+                  {
+                    "corejs": 3 // 指定 runtime-corejs 版本，目前3为最新版本
+                  }
+                ]
+              ],
+              compact: false
+            }
+          }
+
+        ]
       },
       //css样式文件打包
       {
@@ -191,7 +232,7 @@ module.exports = {
             options: {
               modules: true,   //css-module
               importLoaders: 1,
-              localIdentName: "[name]__[local]___[hash:base64:5]"     //5位哈希命名
+              localIdentName: "[name]__[local]___[contenthash:base64:5]"     //5位哈希命名
             },
           },
           {
@@ -219,7 +260,6 @@ module.exports = {
               importLoaders: 1,
             },
           },
-          "less-loader",
           {
             loader: "postcss-loader",
             options: {
@@ -230,6 +270,7 @@ module.exports = {
               }
             }
           },
+          "less-loader",
         ],
       },
       //图片打包
@@ -238,7 +279,7 @@ module.exports = {
         type: "asset",
         generator: {
           // 输出文件位置以及文件名
-          filename: "images/[name].[hash:6][ext]"
+          filename: "images/[name].[contenthash:6][ext]"
         },
         parser: {
           dataUrlCondition: {
@@ -252,7 +293,7 @@ module.exports = {
         type: "asset",
         generator: {
           // 输出文件位置以及文件名
-          filename: "media/[name].[hash:6][ext]"
+          filename: "media/[name].[contenthash:6][ext]"
         },
         parser: {
           dataUrlCondition: {
@@ -266,7 +307,7 @@ module.exports = {
         type: "asset/resource",
         generator: {
           // 输出文件位置以及文件名
-          filename: "fonts/[name].[hash:6][ext]"
+          filename: "fonts/[name].[contenthash:6][ext]"
         }
       },
     ],
@@ -276,6 +317,11 @@ module.exports = {
     React: "React",  //属性为包名，值为项目中使用的命名
     ReactDOM: "ReactDOM"
   },
+  resolve: {
+    fallback: {
+      util: require.resolve("util/")
+    }
+  }
   //vue文件处理
   // resolve: {
   //   alias: {
