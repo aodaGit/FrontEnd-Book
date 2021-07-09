@@ -7,39 +7,43 @@
 > 配置webpack打包前，先安装webapck打包的对应依赖包
 
 - ```js
-  npm i -D webpack@latst webpack-cli@last     webpack5基础打包脚手架
+  npm i -D  webpack@latest webpack-cli     webpack5基础打包脚手架
   ```
 
 - ```
   npm i --save-dev html-webpack-plugin   	html文件动态注入js
   ```
 
-- ```
-  npm i -D clean-webpack-plugin   清除上一次的打包文件
+- ```js
+  npm i -D clean-webpack-plugin   //清除上一次的打包文件
+  ```
+
+- ```js
+  npm i -D style-loader css-loader  //解析加载css文件
   ```
 
 - ```
-  npm i -D style-loader css-loader  解析加载css文件
+   npm i -D postcss-scss   解决css单行注释问题
+   ```
+
+- ```js
+  npm i -D less less-loader  //解析加载less文件
   ```
 
-- ```
-  npm i -D less less-loader  解析加载less文件
+- ```js
+  npm i postcss-loader postcss-preset-env -D   //css自动添加不同浏览器前缀
   ```
 
-- ```
-  npm i postcss-loader postcss-preset-env -D      css自动添加不同浏览器前缀
-  ```
-
-- ```
-  npm i -D mini-css-extract-plugin    拆分css文件
+- ```js
+  npm i -D mini-css-extract-plugin    //拆分css文件
   ```
   
-- ```
-  npm i -D webpack-dev-server  热更新
+- ```js
+  npm i -D webpack-dev-server  //热更新js
   ```
 
-- ```
-  npm i -D  webpack-merge copy-webpack-plugin optimize-css-assets-webpack-plugin uglifyjs-webpack-plugin   webpack合并  静态文件复制  css压缩  js压缩
+- ```js
+  npm i -D  webpack-merge copy-webpack-plugin optimize-css-assets-webpack-plugin uglifyjs-webpack-plugin   //webpack合并  静态文件复制  css压缩  js压缩
   ```
 
 - ```js
@@ -47,42 +51,44 @@
   ```
 
 - ```js
-  npm install -D  @babel/plugin-transform-runtime  @babel/runtime-corejs3  @babel/preset-env js的es6转换为es5兼容写法以及部分浏览器不支持的写法使用polyfill进行模拟
-  ```
-
-- ```
-  npm install --save-dev cross-env  环境变量统一设置，支持mac window linux系统
-  ```
-
-- ```
-  npm install speed-measure-webpack-plugin --save-dev  打包时间分析
+  npm install -D  @babel/plugin-transform-runtime  @babel/runtime-corejs3  @babel/preset-env //js的es6转换为es5兼容写法以及部分浏览器不支持的写法使用polyfill进行模拟
   ```
 
 - ```js
-  npm install webpack-bundle-analyzer --save-dev  分析打包内容
+  npm install --save-dev cross-env  //环境变量统一设置，支持mac window linux系统
+  ```
+
+- ```
+  npm install speed-measure-webpack-plugin --save-dev  //打包时间分析
+  ```
+
+- ```js
+  npm install webpack-bundle-analyzer --save-dev  //分析打包内容
   ```
   
 - ```
-   npm i -D progress-bar-webpack-plugin  打包进度条
+   npm i -D progress-bar-webpack-plugin  //打包进度条
    ```
 
 - ```js
-   npm install @babel/preset-react -D  react文件打包支持  
+   npm install @babel/preset-react -D  //react文件打包支持  
   ```
 
 - ```js
-   npm i -D vue-loader vue-template-compiler vue-style-loader  vue文件打包支持
+   npm install friendly-errors-webpack-plugin --save-dev   //webpack打包提示优化配置
    ```
 
 - ```js
-   npm install friendly-errors-webpack-plugin --save-dev   webpack打包提示优化配置
-   ```
-
-- ```
    npm i  thread-loader -D   //多进程打包，开销较大，慎用
    ```
 
-- vue文件打包支持
+- ```
+   npm install @babel/plugin-proposal-private-methods  @babel/plugin-proposal-class-properties  --save-dev   "@babel/plugin-proposal-private-methods", { "loose": true }]报错时引入
+   ```
+
+- ```js
+   npm i -D vue-loader vue-template-compiler vue-style-loader  //vue文件打包支持
+   ```
 
 ### webpack基础配置
 
@@ -376,40 +382,77 @@
 > webpack在打包中，能够使用babel对高版本js转换为低版本，从而提供兼容处理，但也有部分功能在低版本浏览器无法实现，使用polyfill可以对低版本的浏览器进行垫片填充，从而实现相对应的功能
 
 - ```js
-  {
-          test: /\.(jsx?|js)$/,
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
-            presets: [
-              [
-                "@babel/preset-react",
-                "@babel/preset-env",
-                {
-                  targets: {
-                    edge: "17",
-                    firefox: "60",
-                    chrome: "67",
-                    safari: "11.1"
-                  },
-                  corejs: {
-                    version: "3",
-                  },//新版本需要指定核⼼库版本
-                  modules: false, // 推荐
-                  useBuiltIns: "usage"//按需注⼊
-                }
-              ]
-            ],
-            plugins: [
-              [
-                "@babel/plugin-transform-runtime",
-                {
-                  "corejs": 3 // 指定 runtime-corejs 版本，目前3为最新版本
-                }
-              ]
-            ]
-          },
-          exclude: /node_modules/,
+   // js转义 ES6及以上转为ES5，js解析打包
+        {
+          test: /\.jsx?$/,
+          include: [
+            path.resolve(__dirname, "../src"),
+            path.resolve(__dirname, "../node_modules/@yulintu/")
+          ],
+          use: [
+            {
+              loader: "thread-loader",
+              options: {
+                // 产生的 worker 的数量，默认是 (cpu 核心数 - 1)，或者，
+                workers: 2,
+                workerParallelJobs: 50,
+  
+                // 额外的 node.js 参数
+                workerNodeArgs: ['--max-old-space-size=1024'],
+                poolRespawn: false,
+  
+                // 闲置时定时删除 worker 进程
+                // 默认为 500（ms）
+                // 可以设置为无穷大，这样在监视模式(--watch)下可以保持 worker 持续存在
+                poolTimeout: 2000,
+  
+                // 池分配给 worker 的工作数量
+                // 默认为 200
+                // 降低这个数值会降低总体的效率，但是会提升工作分布更均一
+                poolParallelJobs: 50,
+                name: "my-pool"
+              },
+            },
+            {
+              loader: 'babel-loader',
+              options: {
+                cacheDirectory: true,
+                presets: [
+                  "@babel/preset-react",
+                  [
+                    "@babel/preset-env",
+                    {
+                      targets: {
+                        edge: "17",
+                        firefox: "60",
+                        chrome: "67",
+                        safari: "11.1"
+                      },
+                      corejs: {
+                        version: "3",
+                      },//新版本需要指定核⼼库版本
+                      modules: "umd", // 推荐
+                      useBuiltIns: "usage"//按需注⼊
+                    }
+                  ],
+  
+                ],
+                plugins: [
+                  ["@babel/plugin-proposal-class-properties", { "loose": true }],
+                  ["@babel/plugin-proposal-private-methods", { "loose": true }],
+                  [
+                    "@babel/plugin-transform-runtime",
+                    {
+                      "corejs": 3 // 指定 runtime-corejs 版本，目前3为最新版本
+                    }
+                  ]
+                ],
+                compact: false
+              }
+            }
+  
+          ]
+        },
         
   ```
 
@@ -588,11 +631,6 @@
     },
   ```
 
-  
-
-
-
-
 
 #### postcss冲突
 
@@ -606,32 +644,84 @@
    npm i --save postcss-loader@4.0.4
   ```
 
+#### ["@babel/plugin-proposal-private-methods", { "loose": true }]报错解决
+
+> 打包时，如果遇到此类错误，则是需要引入babel/plugin-proposal-class-properties包，注意，引入时调用
+
+- ```js
+  {
+    "plugins": [["@babel/plugin-proposal-private-methods", { "loose": true }]]
+  }
+  ```
 
 #### vue打包注意事项
 
 ### 配置优化
 
+- 多进程打包
 
+  > 对于耗时较多的文件，如果我们可以开启多进程打包，充分利用cpu，将会大大提高我们的打包速度
+  >
+  > 实际配置中，我们的前端大部分的文件在于解析js，因此，我们对js文件，开启多线程打包
 
+  - ```js
+    //module中配置js
+    {
+                loader: "thread-loader",
+                options: {
+                  // 产生的 worker 的数量，默认是 (cpu 核心数 - 1)，或者，
+                  workers: 2,
+                  workerParallelJobs: 50,
+    
+                  // 额外的 node.js 参数
+                  workerNodeArgs: ['--max-old-space-size=1024'],
+                  poolRespawn: false,
+    
+                  // 闲置时定时删除 worker 进程
+                  // 默认为 500（ms）
+                  // 可以设置为无穷大，这样在监视模式(--watch)下可以保持 worker 持续存在
+                  poolTimeout: 2000,
+    
+                  // 池分配给 worker 的工作数量
+                  // 默认为 200
+                  // 降低这个数值会降低总体的效率，但是会提升工作分布更均一
+                  poolParallelJobs: 50,
+                  name: "my-pool"
+                },
+              },
+    ```
 
+- 缩小文件检索范围
 
+  >  我们在实际打包中，期望能够对需要转义的文件进行转义打包，这样可以降低打包体积，减小打包耗时
+  >
+  > webpack提供了两种缩小文件检索范围的api，include和exlude，inlude为包含解析那些文件，exlude为排除解析那些文件，一般情况下，两者选一即可
 
+  以下为js配置了文件范围后的打包真实测试
 
-基础库分离   ⽤ html-webpackexternals-plugin
+  ```js
+   include: [
+  ​     path.resolve(__dirname, "../src"),   //项目主文件
+  ​     path.resolve(__dirname, "../node_modules/@yulintu/")  //公司node_modelue 组件库
+  ​    ],
+  ```
 
-动态导入第三方公共分离代码    npm install @babel/plugin-syntax-dynamic-import --save-dev   "plugins": ["@babel/plugin-syntax-dynamic-import"
+  - **<u>优化前</u>**
 
-eslit代码规范检查    test: /\.js$/, exclude: /node_modules/, use: [ "babel-loader", + "eslint-loader”
+    - 打包体积分析
 
+    - <img src="D:\Users\zhangqi\AppData\Roaming\Typora\typora-user-images\image-20210709151426859.png" alt="image-20210709151426859" style="zoom:150%;" />
 
+    - 各个阶段打包耗时分析
 
-使用 thread-loader 解析资源   多进程打包
+      ![image-20210709151516822](D:\Users\zhangqi\AppData\Roaming\Typora\typora-user-images\image-20210709151516822.png)
 
+  - **<u>优化后</u>**
 
-
-置 image-webpack-loader     图片压缩配置
-
-babel-polfill-runtime 弃用  不适用业务环境     如何实现动态polifill
+    - 打包总体积减小**70%**
+      - ![image-20210709151900631](D:\Users\zhangqi\AppData\Roaming\Typora\typora-user-images\image-20210709151900631.png)
+      - 总耗时降低**57%**   打包文件减少**31%**
+        - ![image-20210709151935870](D:\Users\zhangqi\AppData\Roaming\Typora\typora-user-images\image-20210709151935870.png)
 
 
 
