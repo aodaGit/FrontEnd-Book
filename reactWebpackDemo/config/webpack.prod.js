@@ -6,17 +6,24 @@ const WebpackMerge = require("webpack-merge");
 
 //css压缩
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+// 命令行提示美化
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 //静态文件赋值
 // const CopyWebpackPlugin = require("copy-webpack-plugin");
-
 //js压缩
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
-
 module.exports = WebpackMerge.merge(webpackConfig, {
   stats: 'errors-only',
   mode: "production",
-  plugins: [],
+  plugins: [
+    new FriendlyErrorsWebpackPlugin({
+      compilationSuccessInfo: {
+        messages: ["项目正在打包，请稍等..."],
+      },
+      clearConsole: true,
+    }),
+  ],
   optimization: {
     minimizer: [
       //js压缩
@@ -46,5 +53,15 @@ module.exports = WebpackMerge.merge(webpackConfig, {
         }
       },
     },
+  },
+  // CDN引入第三方包
+  externals: {
+    'react': 'React',   //属性为包名，值为项目中使用的命名
+    'react-dom': 'ReactDOM',
+    lodash: {
+      commonjs: "lodash",
+      amd: "lodash",
+      root: "_" // 指向全局变量
+    }
   },
 });

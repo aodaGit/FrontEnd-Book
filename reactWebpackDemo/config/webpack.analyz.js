@@ -10,14 +10,14 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 
 //css压缩
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+// 命令行提示美化
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 // 分析打包时间
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 const smp = new SpeedMeasurePlugin();
-
 //js压缩
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
-
 module.exports = WebpackMerge.merge(
   webpackConfig,
   smp.wrap({
@@ -25,6 +25,13 @@ module.exports = WebpackMerge.merge(
     plugins: [
       //分析依赖包大小
       new BundleAnalyzerPlugin(),
+      new FriendlyErrorsWebpackPlugin({
+        compilationSuccessInfo: {
+          messages: ["正在分析项目，请稍等..."],
+        },
+        clearConsole: true,
+      }),
+
     ],
     optimization: {
       minimizer: [
@@ -55,6 +62,16 @@ module.exports = WebpackMerge.merge(
           }
         },
       },
+    },
+    // CDN引入第三方包
+    externals: {
+      'react': 'React',   //属性为包名，值为项目中使用的命名
+      'react-dom': 'ReactDOM',
+      lodash: {
+        commonjs: "lodash",
+        amd: "lodash",
+        root: "_" // 指向全局变量
+      }
     },
   })
 );

@@ -2,33 +2,21 @@
 
 //webpack实例
 // const Webpack = require("webpack");
-
 //静态文件赋值
 // const CopyWebpackPlugin = require("copy-webpack-plugin");
-
 const path = require("path");
-
 // html自动引入js
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-
 // 清除上一次的打包缓存
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-
 // css切割
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-
 //vue文件处理器
 // const vueLoaderPlugin = require("vue-loader/lib/plugin");
-
-// 命令行提示美化
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
-
 // 打包进度
 const ProgressBarWebpackPlugin = require('progress-bar-webpack-plugin')
-
 //当前开发环境
 const devMode = process.argv.indexOf("--mode=production") === -1;
-
 module.exports = {
   // 环境切换
   // 入口文件设置
@@ -36,19 +24,18 @@ module.exports = {
   entry: path.resolve(__dirname, "../src/index.js"),
   //   出口文件设置
   output: {
-    filename: "[name].[chunkhash:8].js", // 根据入口文件，生成添加哈希值的动态出口文件
+    filename: devMode ? "[name].bundle.js" : "[name].[chunkhash:8].js", // 开发环境与chunkhash冲突，根据入口文件，生成添加哈希值的动态出口文件
     path: path.resolve(__dirname, "../dist"), // 打包后的目录文佳夹
   },
   //   与html相关的配置
   plugins: [
     // 清除上一次的打包缓存
     new CleanWebpackPlugin(),
-
     new HtmlWebpackPlugin({
       // 打包基础路径
       template: path.resolve(__dirname, "../public/index.html"),
       // 指定生成的文件名称
-      filename: "index.[chunkhash:8].html",
+      filename: "index.html",
       // 指定js脚本存放的位置，头部还是脚部
       inject: "head",
       // 多入口时，对应的入口模块名
@@ -58,13 +45,6 @@ module.exports = {
         removeComments: true,//移除HTML中的注释
         collapseWhitespace: true //删除空白符与换行符
       }
-    }),
-    // 打包友好提示
-    new FriendlyErrorsWebpackPlugin({
-      compilationSuccessInfo: {
-        messages: ["项目正在打包，请稍等..."],
-      },
-      clearConsole: true,
     }),
     // 打包进度提示
     new ProgressBarWebpackPlugin(),
@@ -177,7 +157,6 @@ module.exports = {
             options: {
               modules: true,   //css-module
               importLoaders: 1,
-              localIdentName: "[name]__[local]___[contenthash:base64:5]"     //5位哈希命名
             },
           },
           {
@@ -192,6 +171,7 @@ module.exports = {
           },
         ],
       },
+      // less打包
       {
         test: /\.less$/,
         use: [
@@ -256,16 +236,6 @@ module.exports = {
         }
       },
     ],
-  },
-  // CDN引入第三方包
-  externals: {
-    'react': 'React',   //属性为包名，值为项目中使用的命名
-    'react-dom': 'ReactDOM',
-    lodash: {
-      commonjs: "lodash",
-      amd: "lodash",
-      root: "_" // 指向全局变量
-    }
   },
   resolve: {
     fallback: {
