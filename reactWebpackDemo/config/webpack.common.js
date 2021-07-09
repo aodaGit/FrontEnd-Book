@@ -31,20 +31,9 @@ const devMode = process.argv.indexOf("--mode=production") === -1;
 
 module.exports = {
   // 环境切换
-  // mode: "development", // 默认生产模式
-  // mode: "production", // 默认生产模式
-
   // 入口文件设置
-
   // 单文件入口
   entry: path.resolve(__dirname, "../src/index.js"),
-
-  // 多文件入口，对应多出口文件
-  // entry: {
-  //   main: path.resolve(__dirname, "../src/main.js"),
-  //   sub: path.resolve(__dirname, "../src/sub.js"),
-  // },
-
   //   出口文件设置
   output: {
     filename: "[name].[chunkhash:8].js", // 根据入口文件，生成添加哈希值的动态出口文件
@@ -58,39 +47,18 @@ module.exports = {
     new HtmlWebpackPlugin({
       // 打包基础路径
       template: path.resolve(__dirname, "../public/index.html"),
-
       // 指定生成的文件名称
       filename: "index.[chunkhash:8].html",
-
       // 指定js脚本存放的位置，头部还是脚部
       inject: "head",
-
       // 多入口时，对应的入口模块名
       // chunks: ["main"],
-
       // 压缩设置
       minify: {
         removeComments: true,//移除HTML中的注释
         collapseWhitespace: true //删除空白符与换行符
       }
     }),
-    // new HtmlWebpackPlugin({
-    //   // 打包基础路径
-    //   template: path.resolve(__dirname, "../public/sub.html"),
-
-    //   // 指定生成的文件名称
-    //   filename: "sub.[hash:8].html",
-
-    //   // 指定js脚本存放的位置，头部还是脚部
-    //   inject: "head",
-
-    //   // 多入口时，对应的入口模块名
-    //   chunks: ["sub"],
-
-    //   // 压缩设置
-    //   minify: false, //默认生产环境压缩，开发环境不压缩
-    // }),
-
     // 打包友好提示
     new FriendlyErrorsWebpackPlugin({
       compilationSuccessInfo: {
@@ -98,18 +66,14 @@ module.exports = {
       },
       clearConsole: true,
     }),
-
     // 打包进度提示
     new ProgressBarWebpackPlugin(),
-
-
     // css分割
     new MiniCssExtractPlugin({
       filename: devMode ? "[name].css" : "[name].[contenthash].css",
       chunkFilename: devMode ? "[id].css" : "[id].[contenthash].css",
     }),
-    //vue模版渲染
-    // new vueLoaderPlugin(),
+
     // 复制特定文件到指定文件夹下
     // new CopyWebpackPlugin({
     //   patterns: [
@@ -131,34 +95,15 @@ module.exports = {
         use: ["cache-loader"],
         include: path.resolve(__dirname, "src"),
       },
-      //vue文件解析打包
-      // {
-      //   test: /\.vue$/,
-      //   use: [
-      //     {
-      //       loader: "vue-loader",
-      //       options: {
-      //         compilerOptions: {
-      //           preserveWhitespace: false,
-      //         },
-      //       },
-      //     },
-      //   ],
-      //   // 减少loder搜索范围
-      //   include: [path.resolve(__dirname, 'src')],
-      //   exclude: '/node_modules/'
-      // },
-
       // js转义 ES6及以上转为ES5，js解析打包
       {
         test: /\.jsx?$/,
         include: [
           path.resolve(__dirname, "../src"),
-          path.resolve(__dirname, "../node_modules/@yulintu/")
         ],
         use: [
           {
-            loader: "thread-loader",
+            loader: "thread-loader",   //多进程打包，文件较少时不建议使用，自身有耗时开销
             options: {
               // 产生的 worker 的数量，默认是 (cpu 核心数 - 1)，或者，
               workers: 2,
@@ -314,20 +259,17 @@ module.exports = {
   },
   // CDN引入第三方包
   externals: {
-    React: "React",  //属性为包名，值为项目中使用的命名
-    ReactDOM: "ReactDOM"
+    'react': 'React',   //属性为包名，值为项目中使用的命名
+    'react-dom': 'ReactDOM',
+    lodash: {
+      commonjs: "lodash",
+      amd: "lodash",
+      root: "_" // 指向全局变量
+    }
   },
   resolve: {
     fallback: {
       util: require.resolve("util/")
     }
   }
-  //vue文件处理
-  // resolve: {
-  //   alias: {
-  //     vue$: "vue/dist/vue.runtime.esm.js",
-  //     " @": path.resolve(__dirname, "../src"),
-  //   },
-  //   extensions: ["*", ".js", ".json", "css", ".vue"],
-  // },
 };
