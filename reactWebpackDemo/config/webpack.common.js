@@ -16,7 +16,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // 打包进度
 const ProgressBarWebpackPlugin = require('progress-bar-webpack-plugin')
 //当前开发环境
-const devMode = process.argv.indexOf("--mode=production") === -1;
+const devMode = process.env.NODE_ENV === "development";
+
 module.exports = {
   // 环境切换
   // 入口文件设置
@@ -50,8 +51,7 @@ module.exports = {
     new ProgressBarWebpackPlugin(),
     // css分割
     new MiniCssExtractPlugin({
-      filename: devMode ? "[name].css" : "[name].[contenthash].css",
-      chunkFilename: devMode ? "[id].css" : "[id].[contenthash].css",
+      filename: "css/[name].[contenthash:8].css",
     }),
 
     // 复制特定文件到指定文件夹下

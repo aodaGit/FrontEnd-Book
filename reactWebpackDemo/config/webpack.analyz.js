@@ -12,7 +12,6 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 // 命令行提示美化
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
-
 // 分析打包时间
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 const smp = new SpeedMeasurePlugin();
