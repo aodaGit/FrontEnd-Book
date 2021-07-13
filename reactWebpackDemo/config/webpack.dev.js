@@ -14,7 +14,7 @@ const WebpackMerge = require('webpack-merge')
 
 module.exports = WebpackMerge.merge(webpackConfig, {
   mode: "development",
-  stats: 'error-only',  //仅错误与新编译时打印消息
+  stats: 'errors-only',  //仅错误与新编译时打印消息
   //设置代码sorce-map
   devtool: "inline-source-map",
 
