@@ -100,6 +100,23 @@
   - 因此**useEffect第二个参数无法对引用数据进行监听**
 - 异步数据请求（async await）
   - 使用async请求数据，不能直接定义useeffect为async，需要定义一个方法进行数据请求和更改，并且调用方法即可
+  
+  - 示例
+  
+    ``
+  
+    ```js
+    const [data, setData] = useState({ hits: [] });
+      useEffect(() => {
+        const fetchData = async () => {
+          const result = await axios(
+            'https://hn.algolia.com/api/v1/search?query=redux',
+          );
+          setData(result.data);
+        };
+        fetchData();
+      }, []);
+    ```
 
 ##  createContext
 
