@@ -23,7 +23,7 @@ git clone https://gitee.com/aodagit/FrontEnd-Book.git
 
 更多前端知识，请关注微信公众号，“前端学点啥”，将会持续更新前端相关的知识点
 
-<a href="https://sm.ms/image/6lbASuvMVkDpLFi" target="_blank"><img src="https://s2.loli.net/2022/01/05/6lbASuvMVkDpLFi.jpg" width=100></a>
+<a href="https://sm.ms/image/6lbASuvMVkDpLFi" target="_blank"><img src="https://s2.loli.net/2022/01/05/6lbASuvMVkDpLFi.jpg" width=200></a>
 
 ## 🤝 如何贡献
 
