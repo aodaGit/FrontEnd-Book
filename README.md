@@ -23,6 +23,8 @@ git clone https://gitee.com/aodagit/FrontEnd-Book.git
 
 更多前端知识，请关注微信公众号，“前端学点啥”，将会持续更新前端相关的知识点
 
+<a href="https://sm.ms/image/6lbASuvMVkDpLFi" target="_blank"><img src="https://s2.loli.net/2022/01/05/6lbASuvMVkDpLFi.jpg" width=100></a>
+
 ## 🤝 如何贡献
 
 我们欢迎所有对前端感兴趣，以及从事前端的同学参与 FontEnd-Book 的持续更新与完善，您可在对相关问题提出 Issue，或者通过微信公众号后台联系我们。
