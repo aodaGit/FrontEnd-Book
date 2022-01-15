@@ -6,6 +6,36 @@
 
 ## 数组乱序（进阶）
 
+## js 中的 forEach 和 map 的区别
+
+> 两个都会遍历原数组，对数组中的每个值进行操作
+>
+> - forEach 如果对原数组进行操作，数组的值为基本数据类型时，需要写入第一个参数进行映射
+
+```js
+//基本数据类型
+let arr = [1, 2, 3, 4, 5];
+arr.forEach((item, index, arrTemp) => {
+  arrTemp[index] = item * 2;
+});
+console.log(arr); // [2, 4, 6, 8, 10]
+
+//引用数据类型
+let arr = [{ a: 1 }, { a: 10 }, { a: 5 }];
+arr.forEach((item, index) => {
+  item.a = item.a * 10;
+});
+console.log(arr); //0: {a: 10} 1: {a: 100}2: {a: 50}
+```
+
+- map 会返回一个新的数组，操作时需要返回被操作的值
+
+- ```js
+  let arr = [{ a: 1 }, { a: 10 }, { a: 5 }];
+  let newArr = arr.map((item) => item.a * 2);
+  console.log(newArr); //[2, 20, 10]
+  ```
+
 ## sysbol 的使用场景
 
 > sysbol 为 es6 新的数据类型，通过 sysbol（）方法可以得到一个独一无二的值
