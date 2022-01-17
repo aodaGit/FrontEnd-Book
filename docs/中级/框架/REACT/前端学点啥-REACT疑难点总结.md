@@ -43,21 +43,67 @@ React.createElement(
 > 将react看成是一个宇宙，那么组成宇宙的每一个原子之间不可能完全独立，它们之间必然存在可以相互发送和接受信息的方式，这种方式就是组件之间的通讯
 
 - 通讯方式1(父子通讯)
+
+  - 父传子
+
+  > 父组中定义数据，通过给子组件绑定props的方式传递到子组件使用
+
+  ```jsx
+  // 父组件
+  import Son from "./son/Son.jsx"
+  
+  function App() {
+    return (
+      <div className="App">
+      <Son message='父组件数据'></Son>
+      </div>
+    );
+  }
+  
+  export default App;
+  
+  
+  //子组件
+  const Son=(props)=>{
+      return (
+          <div>
+              <p>这是父组件传递的值{props.message}</p>
+          </div>
+      )
+  }
+  export default Son
+  
+  ```
+
+  - 子传父
+
+  > 子组件
+
 - 通讯方式2（兄弟通讯）
+  - connext传递
 - 通讯方式3（数据流通讯）
+  - 提升为模块状态，在状态中进行数据管理
 ## 有状态和无状态组件
 > react非常重视数据和视图的分离，每一个组件中都会有数据和视图，那么数据究竟来自那里，从这个角度可以将react中的组件进行区别，组件中拥有自己定义的数据，这个数据完全由这个组件自己来控制，这样的组件就叫做有状态的组件，组件中不存在的自己定义的数据，需要来自其他组件以通讯等的方式传递数据，这样的组件就是无状态组件。
 
 > 那么这样划分组件有何意义呢？
 
 > 组件更加颗粒化，按照这样的分类标准，实际开发中，我们可以将一些常见的用于纯展示的UI视图拆分出来，从而减少数据的耦合度。
- 
+
 
 ## 路由管理
 
 ## 权限管理
 
 ## 错误边界
+
+## 生命周期
+
+> 在前端框架里，生命周期是一个很常见的概念，我们可以将其理解为人或者植物的生长阶段
+
+> react在类组件中有即将挂载（onMount）,挂载后（onMounted）,更新（onUpdate），销毁（onDestyed）等重要生命周期
+>
+> 函数式组件中，也有类似于生命周期的管理，函数组件的生命周期，请前往[hooks](./)应用中的useEffect中查看
 
 ## 性能优化技巧
 
@@ -80,19 +126,33 @@ React.createElement(
 7. Child componentDidMount
 8. Parent componentDidMount
 
-## react 的样式怎么做
+## react的样式怎么做
 
-> 讲道理，样式这个话题不应该单独拿出来说，毕竟UI视图就是前端三大宝，所有框架都会集成，并且处理好这个问题，骚的就是在vue这个框架里，scope一行代码就可以处理样式污染问题，但是，在react，并没有这么简单
+> 讲道理，样式这个话题不应该单独拿出来说，毕竟UI视图就是前端三大宝（html，css，js），所有框架都会集成，并且处理好这个问题，骚的就是在vue这个框架里，scope一行代码就可以处理样式污染问题，但是，在react，并没有这么简单
 
-> react中，如果将父组件中，引入的所有子组件，都存在一个类名，那么就会不可避免的出现样式污染问题，而且react中class是类组件的关键词，必须用className代替
+> react中，如果将父组件中，引入的所有子组件，都存在一个类名，那么就会不可避免的出现样式污染问题，那么如何解决这个问题呢？
 
-> 那么如何解决这个头疼的样式污染问题呢？
+> 前端界目前有很多种处理方式，这里只说实际开发中我本人一直使用的一种方式，代码倾入性小，配置简单
 
-> 
-
-
-> react 官方暂时不支持如同 vue 一样的快级 css
+> “css-module”，在css-module中，每一个组件都是独立的module，当我们编写一个jsx组件时，css-module都会生成一个基于组件名字的随机hash值，注入到这个组件中的每一个css样式中，这样当我们在父组件中引入多个子组件，即使样式名字一样，但是前缀的hash值也会不一样，这样便巧妙的避开了由于样式名字一样而导致的样式污染问题
 >
-> 不过可以使用 css-module，webpack 默认开启 css-module，也可以针对 webpack 进行命名设置，同时 css-module 也支持 compase 的继承等
->
-> 因此对于 react 的项目做法可以将全局样式使用 css，对于组件样式可以使用 less，同时配置 calssName 可以做类名等的切换
+> ![](https://s3.bmp.ovh/imgs/2022/01/98dab1ef59af1776.png)
+
+> 当然我们所熟悉的scss和less同样支持css-module的配置，实际开发中，只需要在webpack配置中配置即可。
+
+> 实际开发中，我们可能还会遇到根据不同的状态来渲染不同的样式这样的需求，我们可以配合className这个库完全的结合
+
+```jsx
+import style from  './App.module.css';
+
+// 多个样式使用
+function App() {
+  return (
+    <div className="App">
+      <p className={`${style.f66} ${style.colorRed}`}>测试</p>
+    </div>
+  );
+}
+
+export default App;
+```
