@@ -16,6 +16,18 @@
 > 那么使用了jsx之后，是如何将jsx转换为我们页面上所看到的视图的呢？
 
 > 简单来说，我们使用jsx写的每一个组件，是不能直接进行渲染解析的，会先交给babel进行转义，生成虚拟的json格式的dom描述节点，然后将这个节点再次交给react的createElement方法，底层通过判断json中的type组件类型，来做一系列的分析优化，最终生成我们所看到的视图！
+```jsx
+// jsx生成的json格式dom描述节点
+React.createElement(
+  "div",
+  null,
+  React.createElement("img", {
+    src: "avatar.png",
+    className: "profile"
+  }),
+  React.createElement(Hello, null)
+);
+```
 ### Fibber
 
 ### 虚拟dom
