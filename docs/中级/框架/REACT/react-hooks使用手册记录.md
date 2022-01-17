@@ -80,6 +80,9 @@ export default Demo
   - const 传过来的值=useContext（共享器）
   - 子组件中可以使用这个定义的传过来的值
 
+## useCallback
+## useMemo
+## useRef
 ## useContext
 
 ###　优化技巧
