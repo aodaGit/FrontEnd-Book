@@ -4,76 +4,30 @@
 
 ## useState
 
-> 无论任何框架，要做到数据和视图分离，首先就要清楚的是，如何将数据和视图通过特定的方式绑定，hooks中的useState就是做这件事的
+> 无论任何框架，要做到数据和视图分离，首先就要清楚的是，如何将数据和视图通过特定的方式绑定，hooks中的useState就是做这件事的。
 
-> useState(传入一个 state 的默认值。可以是五大数据类型)，此时会返回一个数组，数组中的第一个值就是 state 的值，第二个值就是改变这个 state 值的唯一方法
+> useState,通过传入五大数据类型或者函数返回值注入一个 state 的默认值)，此时会返回一个数组，数组中的第一个值就是 state 的值，我们可以当作用来做接受数据，从而渲染到具体的视图上，第二个值就是改变这个 state 值的全局唯一方法！
 
-#### 常用 api
+### 使用方式
+```jsx
+import {useState } from react;
 
-- 函数式更新 state 的值
-
-  - 使用了 useState 创建初始值后，改变数据的唯一方式就是数据第二个方法，通常第二个方法也可以传入一个函数，函数返回这个值即可，针对这个特点，可以给 react 封装一个全局方法，改变引用数据类型，每次更改引用数据类型的 state 时，只需传参更改数据即可
-
-    ```react
-    import React, { useEffect, useState } from "react";
-    function Meau() {
-      // 设定一个初始数组
-      const [meauList, setMeauList] = useState([]);
-      const [textList, setTextList] = useState([
-        "第一个值",
-        "第二个值",
-        "第三个值",
-      ]);
-      useEffect(() => {
-        setMeauList(["1", "2", "3", 8, 9, 50]);
-      }, []);
-
-      const changeMeau = (data, index, val) => {
-        setMeauList(changeData(data, index, val));
-      };
-      const changeTextFn = (data, index, val) => {
-        setTextList(changeData(data, index, val));
-      };
-
-      const changeData = (data, index, val) => {
-        //拷贝引用数据，更改地址
-        let temp = [...data];
-        temp[index] = val;
-        return temp;
-      };
-
-      // 具体页面展示dom
-      return (
-        <div>
-          <ul>
-            {meauList.map((item, index) => (
-              <li
-                onClick={() => {
-                  changeMeau(meauList, index, +item + 1);
-                }}
-                key={index}
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
-          {textList.map((item, index) => (
-            <span
-              key={index}
-              onClick={() => {
-                changeTextFn(textList, index, "这个值已更改");
-              }}
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-      );
-    }
-
-    export default Meau;
-
-    ```
+// state注入
+const [num,setNum]=useState(0)  //数字
+const [title,setTitle]=useState('前端学点啥')  //字符串
+const [isStudy,setIsStudy]=useState(true)  //布尔值
+const [options,setOptions]=useState({name:'前端学点啥',age:18})  //对象
+const [money,setMoney]=useState([6,66,666])  //数组
+const Demo=()=>{
+  return (
+    <>
+    <p>{num}</p>
+    <Button onClick={()=>{ setTitle('前端打工仔')  }}>{num}</Button>
+    </>
+  )
+}
+export default Demo
+```
 
 - 注意，数字和字符串可以直接修改，数组与对象修改时需要将原来的值与需要更新的值一起进行合并赋值
 
