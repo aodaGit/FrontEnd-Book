@@ -45,14 +45,8 @@ export default Demo
 
 > useEffect为react提供的一个类似生命周期的方法，可以理解为合并了原来类组件 中的三个生命周期，挂载（didmount），更新（update）销毁（distroy）
 
-> useEffect方法接受两个参数，参数1为实际产生副作用的执行事件，参数2为参数1中实际依赖的数据
-
-
-
-- 数据更新监听
-
-  - 当需要对某一项值进行监听时，可以使用第二个参数，参数类型为基本数据类型，不能是引用数据类型，监听引用数据类型会造成死循环
-
+> useEffect方法接受两个参数，参数1为实际产生副作用的执行事件，参数2为参数1中实际依赖的数据,需要注意的是参数2不能为引用数据，原理是useEffect内部会将第二个参数依赖的数据进行浅层次对比，引用数据由于引用地址始终不变，因此每次对比后都会返回true，都会引起数据的update，从而产生死循环
+> 
 - 第二个参数传值区别
 
   - 不传参
@@ -65,17 +59,13 @@ export default Demo
 - 如何监听引用数据类型
 
   - vue 与 react 的共同点都是对于引用数据，只能浅层监听，对于嵌套的数据无法正常监听，因此在使用 usestate 的时候，对引用数据更新时，只能重新给一个新值，改变地址，从而驱动数据再次更新
-  - 因此**useEffect 第二个参数无法对引用数据进行监听**
+  - 因此**useEffect 第二个参数无法对引用数据进行监听**，实际开发中可使用第三方库useDeepCompare替代useeffect，对引用数据进行依赖
 
 - 异步数据请求（async await）
 
   - 使用 async 请求数据，不能直接定义 useeffect 为 async，需要定义一个方法进行数据请求和更改，并且调用方法即可
-
-  - 示例
-
-    ``
-
     ```js
+    // 示例
     const [data, setData] = useState({ hits: [] });
     useEffect(() => {
       const fetchData = async () => {
@@ -89,8 +79,30 @@ export default Demo
     ```
 
 ## useCallback
+> useCallback具有缓存方法的功能，与useEffect一样的是，useCallback也接受两个两个参数，参数1为具体的执行方法，参数2为方法1所依赖的数据,对比useCallback的使用，业内褒贬不一，主要在于useCallBack在缓存的同时，自身存在消耗。
 
+> useCallback的使用场景主要在于父子组件中相互调用时，减少不必要渲染，子组件使用memo包裹时，只会对基本数据做对比，对于子组件中的方法并不会产生作用，这时就需要父组件中使用usecallBack来对方法进行缓存，从而减少不必要的渲染
+
+```jsx
+// 示范
+import {useCallback} from "react"
+const [obj,setObj]=useState({name:'前端学点啥',age:18})
+const onChange=useCallback(()=>{
+  setObj({...{name:'前端一直学',age:20}})
+},[obj])
+```
 ## useMemo
+
+> usememo和usecallBack有着非常相似的使用场景，两者内部都使用了一定的缓存效果，不同的是usememo是对值的缓存，usecallback是对函数方法的缓存，关于usememo的使用，使用过vue的同学可以联想到vue中的computed计算方法，usememo有同工之妙，不过业内对此也是褒贬不一，与usecallback存在同样的问题，两者在缓存优化的同时，自身都会带来额外的性能消耗，因此，也是建议在使用时，对于计算复杂的数据可以使用usememo，数据较为简单的情况下不建议使用。
+
+```jsx
+// 示例
+import {usememo} from "react"
+const [options,setOptions]=useState({title:'前端学点啥',age:18})
+const title=usememo(()=>(
+  options.title
+),[options])
+```
 
 ## useRef
 
