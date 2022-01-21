@@ -47,21 +47,11 @@ Record<string,any>
 
 ```tsx
 // 数组可以有两种主要的写法
-//
-```
-
-#### 常规类型写法
-
-```tsx
+// 常规类型写法
 const list: number[] = [1, 1, 23];
-```
-
-#### 泛型写法
-
-```tsx
+// 泛型写法
 const list: Array<number> = [1, 2, 3, 3];
 ```
-
 ### 接口（interfance）
 
 ### 枚举(enum)
