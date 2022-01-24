@@ -201,5 +201,5 @@ type A = string;
 type B = A & number;
 ```
 ## 推荐阅读
-### [TS中文版]((https://jkchao.github.io/typescript-book-chinese/))
+### [TS中文版](https://jkchao.github.io/typescript-book-chinese/)
 
