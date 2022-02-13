@@ -13,6 +13,12 @@
 const list: number = 666;
 ```
 
+### 布尔值
+
+```tsx
+const list: booble = false;
+```
+
 ### 字符串
 
 ```tsx
@@ -52,9 +58,19 @@ const list: number[] = [1, 1, 23];
 // 泛型写法
 const list: Array<number> = [1, 2, 3, 3];
 ```
-### 接口（interfance）
+## 接口（interfance）
+```ts
+// interface可以简单的一些类型的集合
+// 如我们定义后端返回的用户信息
+interface UserInfo {
+  name:string,
+  age:number,
+  scool?:string
+}
 
-### 枚举(enum)
+```
+
+## 枚举(enum)
 
 #### 数字枚举
 
@@ -93,18 +109,23 @@ numbers.a=A
 numbers.0=O
 ```
 
-### 布尔
-
 ### void
 
 ```tsx
 // 一般用于函数无返回值时的类型
+const onHandle=():void=>{
+  // 表示函数onHandle仅更新state，无返回值
+  setState(66666)
+}
 ```
 
 ## TS-断言
 
 ```tsx
 // 参数后添加！感叹号，告诉程序开发者明确知道这是一个明显的类型
+
+// 当is
+const isShow! = true
 ```
 
 ## TS-类型守卫
