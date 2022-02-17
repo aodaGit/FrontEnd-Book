@@ -13,12 +13,15 @@
 ```jsx
 import {useState } from react;
 
-// state注入
+// state注入，state支持函数式和直接值的初始值两种方式注入
+
 const [num,setNum]=useState(0)  //数字
 const [title,setTitle]=useState('前端学点啥')  //字符串
 const [isStudy,setIsStudy]=useState(true)  //布尔值
 const [options,setOptions]=useState({name:'前端学点啥',age:18})  //对象
 const [money,setMoney]=useState([6,66,666])  //数组
+
+const [maxNum,setMaxNum]=useState(()=>(888))  // 函数式返回
 const Demo=()=>{
   return (
     <>
@@ -108,7 +111,7 @@ const title=usememo(()=>(
 
 ## useContext
 
-###　优化技巧
+## hooks优化技巧
 
 - 单独组件
   - 组件使用某个方法的返回值，只有值有变化时渲染
@@ -118,3 +121,5 @@ const title=usememo(()=>(
 - 父子组件调用
   - 父组件调用子组件，只有子组件引用的 state 改变时，才驱动子组件渲染
     - 使用 memo 方法包裹整个子组件，memo 方法会监听前后两次的 props 值，只有值改变才会驱动渲染
+
+## 如何更好的写自定义hooks
