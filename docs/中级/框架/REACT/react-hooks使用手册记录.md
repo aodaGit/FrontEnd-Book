@@ -110,6 +110,42 @@ const title=usememo(()=>(
 ## useRef
 
 ## useContext
+> 使用这个api之前先思考一个非常常见的场景，当一个页面或者模块非常复杂的情况下，我们通常会拆分为一些组件，那么当组件存在多层时，组件之间共享的状态该如何传递呢。
+
+> 我们可以将数据通过props一层层传递，如果有这样做过的同学应该非常清楚，这样做，状态将会很难维护，而且需要层层去传值，很难保证值的唯一性
+
+> 现在，我们就可以使用useContext这个语法糖来解决
+
+```tsx
+// 示例
+
+// 父组件
+import React from "react"
+const Parent=()=>{
+  const [num.setNum]=useState(1)
+  // 创建上下文数据
+  const contextData = React.createContext();
+
+  // value 属性上挂载需要传递的数据，可以为状态值，也可以为修改状态值方法，或者其他全局能用到的方法
+  return <contextData.Provider value={num}>
+  <Son></Son>
+  </contextData.Provider>
+}
+export default Parent
+
+
+//孙子组件
+import React , {useContext} from "react"
+const Son=()=>{
+  const [num.setNum]=useState(1)
+  // 此时孙子组件中就可以通过useContext获取到父组件中传递的数据
+  const contextData = useContext(contextData)
+  return <div >
+  { contextData?.num  }
+  </div>
+}
+export default Parent
+```
 
 ## hooks优化技巧
 
