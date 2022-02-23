@@ -63,8 +63,6 @@ React.createElement(
 
 ### 通讯方式 1(props 传递)
 
-- 父传子
-
 > 父组中定义数据，通过给子组件绑定 props 的方式传递到子组件使用
 
 ```jsx
@@ -108,8 +106,6 @@ export default Son
 
 ## 路由管理
 
-## 权限管理
-
 ## 错误边界
 
 ## 生命周期
@@ -119,14 +115,6 @@ export default Son
 > react 在类组件中有即将挂载（onMount）,挂载后（onMounted）,更新（onUpdate），销毁（onDestyed）等重要生命周期
 >
 > 函数式组件中，也有类似于生命周期的管理，函数组件的生命周期，请前往[hooks](./)应用中的 useEffect 中查看
-
-## 性能优化技巧
-
-#### immer 原理
-
-## 页面重载，保留数据
-
-## 多语言
 
 ## react 父子组件渲染顺序
 
