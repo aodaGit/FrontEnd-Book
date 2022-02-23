@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="icon" href="./static/favicon.ico" />
+    <link rel="manifest" href="./static/manifest.json" />
+
+    <title>React App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- 生产环境CDN导入第三方包 -->
+    <% if(process.env.NODE_ENV==='production') {%>
+    <script
+      crossorigin
+      src="https://unpkg.com/react@17/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"
+    ></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.core.min.js"></script>
+    <%}%>
+  </body>
+</html>
