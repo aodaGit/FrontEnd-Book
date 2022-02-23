@@ -49,9 +49,11 @@ React.createElement(
 
 ### 调度器
 
+> 调度器为 react 16 之后的产物，react 16 前 对真实 dom 的更新是一个不可中断的同步操作，也就是必须等到前一个更新任务结束，下一个更新任务才可以开始。16 后，react 将每一次的更新任务以 5 毫秒为基本单位，分为无法个任务切片，官方称之为时间切片，同时，在每一次的调用栈中，每一个切片都有更新优先级，为了极大的利用浏览器达到快速更新，react 更是模拟采用了浏览器的空闲时间，将一些优先级低的加入到空闲时间中进行，这种更新的机制就是 react 的调度器。
+
 ### 事件合成
 
-- react 的本质是一个 ui 渲染框架，react 为了能够兼容所有的浏览器事件处理，自己内部定义了合成事件，我们所写的 react 事件，会被 react 解析为具体的合成事件类型，再去映射到具体的事件中，v17 版本前，react 的合成事件挂在 document 上，v17 后，挂载在顶部容器上，同一个容器，可以容纳多个合成事件，这样为微前端做了铺垫
+> react 的本质是一个 ui 渲染框架，react 为了能够兼容所有的浏览器事件处理，自己内部定义了合成事件，我们所写的 react 事件，会被 react 解析为具体的合成事件类型，再去映射到具体的事件中，v17 版本前，react 的合成事件挂在 document 上，v17 后，挂载在顶部容器上，同一个容器，可以容纳多个合成事件，这样为微前端做了铺垫
 
 ## [Hooks 的使用](./react-hooks使用手册记录.md)
 
@@ -59,47 +61,42 @@ React.createElement(
 
 > 将 react 看成是一个宇宙，那么组成宇宙的每一个原子之间不可能完全独立，它们之间必然存在可以相互发送和接受信息的方式，这种方式就是组件之间的通讯
 
-- 通讯方式 1(父子通讯)
+### 通讯方式 1(props 传递)
 
-  - 父传子
+- 父传子
 
-  > 父组中定义数据，通过给子组件绑定 props 的方式传递到子组件使用
+> 父组中定义数据，通过给子组件绑定 props 的方式传递到子组件使用
 
-  ```jsx
-  // 父组件
-  import Son from "./son/Son.jsx"
+```jsx
+// 父组件
+import Son from "./son/Son.jsx"
 
-  function App() {
+function App() {
+  return (
+    <div className="App">
+    <Son message='父组件数据'></Son>
+    </div>
+  );
+}
+
+export default App;
+
+
+//子组件
+const Son=(props)=>{
     return (
-      <div className="App">
-      <Son message='父组件数据'></Son>
-      </div>
-    );
-  }
+        <div>
+            <p>这是父组件传递的值{props.message}</p>
+        </div>
+    )
+}
+export default Son
 
-  export default App;
+```
 
+### 通讯方式 2（context 上下文传递）
 
-  //子组件
-  const Son=(props)=>{
-      return (
-          <div>
-              <p>这是父组件传递的值{props.message}</p>
-          </div>
-      )
-  }
-  export default Son
-
-  ```
-
-  - 子传父
-
-  > 子组件
-
-- 通讯方式 2（兄弟通讯）
-  - connext 传递
-- 通讯方式 3（数据流通讯）
-  - 提升为模块状态，在状态中进行数据管理
+详细用法前在 react hooks 中的 useContext 查看
 
 ## 有状态和无状态组件
 
