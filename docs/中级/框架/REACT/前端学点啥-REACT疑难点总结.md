@@ -106,7 +106,7 @@ export default Son
 
 ## 路由管理
 
-## 错误边界
+[请直接阅读此文章](https://juejin.cn/post/7025418839454122015)
 
 ## 生命周期
 
@@ -161,4 +161,7 @@ export default App;
 
 ## react 推荐阅读资料
 
-- [react 哲学思考](https://gitee.com/link?target=https%3A%2F%2Fgithub.com%2Fmithi%2Freact-philosophies)
+- [react 布道师关于 react 的思考](https://gitee.com/link?target=https%3A%2F%2Fgithub.com%2Fmithi%2Freact-philosophies)
+- [react 原理揭秘 ](https://react.iamkasong.com/)
+- [react 最佳实践-网易云音乐团队 ](https://juejin.cn/post/6844904165500518414)
+- [react 项目实践 ](https://juejin.cn/post/6844903985338400782)
