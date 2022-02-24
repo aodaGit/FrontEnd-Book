@@ -1,22 +1,28 @@
 # react
 
-> 首先声明一点，任何技术点，包括框架，千万不要死记硬背八股文，那样会让你在技术这条路上越走越难，就像有面试官问你 react 是什么的时候，千万不要用烂大街的口吻告诉他，这是一个 MVC 的现代化单页面框架。对于技术的学习，要想真正理解它，请试着从它的历史，原理去理解它，然后达到自己对这个技术的真正的理解。
+[![bPjsTH.jpg](https://s4.ax1x.com/2022/02/24/bPjsTH.jpg)](https://imgtu.com/i/bPjsTH)
 
-> react 由 facebook 公司开发，它的初衷就是帮助用户高效快速的更新浏览器的 DOM，在数据不断变化的情况下，保持页面内容的稳定和流畅，再从它的 logo 去看，react 的 logo 就如同一个个原子组成的宇宙，这些原子就是构建 react 单页面应用的模块，这些模块之间可以互相组合嵌套。
+> 首先声明一点，任何技术点，包括框架，千万不要死记硬背八股文，那样会让你在技术这条路上越走越难，对于技术的学习，要想真正理解它，请试着从它的历史，原理去理解它，然后达到自己对这个技术的真正理解。
+
+> react 由 facebook 公司开发，它的初衷就是帮助用户在数据变化的情况下高效快速更新 UI 视图。react 的 logo 如同一个个原子组成的宇宙，这些原子就是构建 react 单页面应用的 JSX 模块，这些模块之间可以互相组合嵌套。
+
+## react 渲染流程图解
+
+[![biv8yV.png](https://s4.ax1x.com/2022/02/24/biv8yV.png)](https://imgtu.com/i/biv8yV)
 
 ## 核心概念
 
 ### JSX
 
-> jsx 是构成 react 每一个原子组件的一种写法，具体来说就是可以在一个文件内，写 html 的 UI 内容和 JS 的交互内容，共同构成一个完整的组件。
+> jsx 是构成 react 每一个原子组件的一种写法，具体来说就是可以在一个 js 或者 ts 文件内，可以写 html 的 UI 内容和 JS 的交互内容，共同构成一个完整的组件。
 
 > 那么，react 为何要这么做呢？
 
 > 还是回到 react 的初衷，从初衷谈起，react 认为 UI 的展示由一个个的原子组件组成，因为一个组件就需要表达一个完整的小模块，包含它的 html 和它的动作 js，这样子就可以讲通这个问题了。
 
-> 那么使用了 jsx 之后，是如何将 jsx 转换为我们页面上所看到的视图的呢？
+> 那么使用了 jsx 之后，jsx 是如何将一个 jsx 组件 转换为我们页面上所看到的视图的呢？
 
-> 简单来说，我们使用 jsx 写的每一个组件，是不能直接进行渲染解析的，会先交给 babel 进行转义，生成虚拟的 json 格式的 dom 描述节点，也就是我们经常耳濡目染的虚拟 dom，然后将这个节点再次交给 react 的 createElement 方法，底层通过判断 json 中的 type 组件类型，来做一系列的分析优化，最终生成我们所看到的视图！
+> 简单来说，我们使用 jsx 写的每一个组件，是不能直接进行渲染解析的，会先交给 babel 进行转义，生成虚拟的 dom 描述节点，，然后将这个节点再次交给 react 的 createElement 方法，底层通过判断节点中 type 组件类型，来做一系列的分析，最终去更新浏览器的真实 dom，浏览器再通过渲染绘制，生成我们所看到的视图！
 
 ```jsx
 // jsx生成的json格式dom描述节点
@@ -33,7 +39,15 @@ React.createElement(
 
 ### Fiber
 
-> Fiber 是 react 16 重构之后的一个新概念，16 以前 react 对于 dom，以及函数的调用更新都是同步进行，当同步进行的动作较多时，就会存在阻塞，从而造成页面卡顿的现象，16 之后，16 之后 react 将这些更新和调用的动作全部分成分片，通过调用浏览器的空闲时间来达成分布更新的目的，这些具体的更新细节就挂载在每一个 fiber 节点上，实际上每一个 jsx 的组件都会生成一个 fiber 节点的链表，每一个 fiber 节点都包含了当前 dom 节点的具体信息，更新优先级，更新节点在整个 root fibber 节点树中的位置等等
+在 React15 及以前，Reconciler 采用递归的方式创建虚拟 DOM，递归过程是不能中断的。如果组件树的层级很深，递归会占用线程很多时间，造成卡顿。
+
+为了解决这个问题，React16 将递归的无法中断的更新重构为异步的可中断更新，由于曾经用于递归的虚拟 DOM 数据结构已经无法满足需要。于是，全新的 Fiber 架构应运而生。
+
+#
+
+> Fiber 是 react 16 重构之后的一个新概念。
+
+> 15 以前 react 采用递归的方式创建虚拟 DOM，递归过程是不能中断的。如果组件树的层级很深，递归会占用线程很多时间，造成卡顿。16 之后 react 采用 fiber 架构，将递归的无法中断的更新重构为异步可中断的更新，整个程序会存在同时存在两个 fiber 节点树，一个用于最终更新到真实 dom 的 rootFiber，一个更新状态时的 workInProgress Fiber 树，每一个 fiber 节点上都包含了当前组件对应的类型，DOM 节点，更新优先级，当前节点在整个 root fibber 节点树中的位置等等
 
 ### 虚拟 dom 和 Diff 算法
 
@@ -54,6 +68,45 @@ React.createElement(
 ### 事件合成
 
 > react 的本质是一个 ui 渲染框架，react 为了能够兼容所有的浏览器事件处理，自己实现了合成事件，我们所写的 react 事件，会被 react 丢进 react 事件池中， 解析为具体的合成事件类型，再根据 fiber 节点上的调度优先级映射到具体的 dom 事件中，v17 版本前，react 的合成事件挂在 document 上，v17 后，挂载在顶部容器上，同一个容器，可以容纳多个合成事件，这样为微前端做了铺垫
+
+## 组件通讯
+
+> 将 react 看成是一个宇宙，那么组成宇宙的每一个原子之间不可能完全独立，它们之间必然存在可以相互发送和接受信息的方式，这种方式就是组件之间的通讯
+
+### 通讯方式 1(props 传递)
+
+> 父组中定义数据，通过给子组件绑定 props 的方式传递到子组件使用
+
+```jsx
+// 父组件
+import Son from "./son/Son.jsx"
+
+function App() {
+  return (
+    <div className="App">
+    <Son message='父组件数据'></Son>
+    </div>
+  );
+}
+
+export default App;
+
+
+//子组件
+const Son=(props)=>{
+    return (
+        <div>
+            <p>这是父组件传递的值{props.message}</p>
+        </div>
+    )
+}
+export default Son
+
+```
+
+### 通讯方式 2（context 上下文传递）
+
+详细用法前在 react hooks 中的 useContext 查看
 
 ## react hooks
 
@@ -99,6 +152,22 @@ const Demo=()=>{
 export default Demo
 ```
 
+#### useState 最佳实践
+
+> useState 可以为项目中用到的每一个状态创建状态值，但是，如果无脑创建，则会造成状态满天飞的局面
+
+```tsx
+// 保存和更新用户信息
+
+❌ bad
+const [name,setName]=useState('前端学点啥')
+const [age,setAge]=useState(18)
+const [id,setID]=useState(007)
+
+✅ good
+const [user,setUser]=useState({ name:'',age:18,id:007})
+```
+
 ### useEffect
 
 > useEffect 为 react 提供的一个类似生命周期的方法，可以理解为合并了原来类组件 中的三个生命周期，挂载（didmount），更新（update）销毁（distroy）
@@ -112,7 +181,7 @@ export default Demo
   - 传空数组
     - useEffect 为挂载，更新，销毁三个生命周期的组合，传入空数组时，此 useEffect 只会在挂载阶段运行一次，当数据更新后，不会重新渲染
   - 传监听的 state
-    - 会在首次 mount 挂载一次，同时，当监听的数据发生改变时也会重新渲染一次数据，**不建议在此 eeect 中直接修改 state 的值，直接修改会触发 update 更新生命周期，因此整个组件会渲染两次**
+    - 会在首次 mount 挂载一次，同时，当监听的数据发生改变时也会重新渲染一次数据.
 
 - 如何监听引用数据类型
 
@@ -136,11 +205,52 @@ export default Demo
     }, []);
     ```
 
+#### useEffect 最佳实践
+
+```tsx
+// 首先明确一点，useEffect只是类似于生命周期，但不完全等同于生命周期，类组件中的生命周期只能在生命周期方法中使用一次，useEffect更加提倡根据不同的功能拆分为不同的Effect
+
+// 下面场景，拿到浏览器url中的token，存储到localStorag中，同时获取用户信息
+
+
+❌ bad
+const [userName,setUserName]=useState('')
+useEffect(()=>{
+// 虚假方法，获取浏览器url中的token
+const token=getParams('token')
+localStorage.setItem('token', token);
+
+// 获取并保存用户状态
+const getUserInfo=async ()=>{
+     const name=await fetch.get('user')
+     setUserName(name)
+}
+getUserInfo()
+},[userName])
+
+✅ good
+
+const [userName,setUserName]=useState('')
+
+useEffect(()=>{
+const token=getParams('token')
+localStorage.setItem('token', token);
+},[])
+
+useEffect(()=>{
+const getUserInfo=async ()=>{
+     const name=await fetch.get('user')
+     setUserName(name)
+}
+getUserInfo()
+},[userName])
+```
+
 ### useCallback
 
 > useCallback 具有缓存方法的功能，与 useEffect 一样的是，useCallback 也接受两个两个参数，参数 1 为具体的执行方法，参数 2 为方法 1 所依赖的数据,对比 useCallback 的使用，业内褒贬不一，主要在于 useCallBack 在缓存的同时，自身存在消耗。
 
-> useCallback 的使用场景主要在于父子组件中相互调用时，减少不必要渲染，子组件使用 memo 包裹时，只会对基本数据做对比，对于子组件中的方法并不会产生作用，这时就需要父组件中使用 usecallBack 来对方法进行缓存，从而减少不必要的渲染
+> useCallback 的使用场景主要在于父子组件中相互调用时，减少不必要渲染，子组件使用 memo 包裹时，只会对基本数据做对比，对于子组件中的方法并不会产生作用，这时就需要父组件中使用 useCallBack 来对方法进行缓存，从而减少不必要的渲染
 
 ```jsx
 // 示范
@@ -215,45 +325,6 @@ export default Parent
     - 使用 memo 方法包裹整个子组件，memo 方法会监听前后两次的 props 值，只有值改变才会驱动渲染
 
 ## 如何更好的写自定义 hooks
-
-## 组件通讯
-
-> 将 react 看成是一个宇宙，那么组成宇宙的每一个原子之间不可能完全独立，它们之间必然存在可以相互发送和接受信息的方式，这种方式就是组件之间的通讯
-
-### 通讯方式 1(props 传递)
-
-> 父组中定义数据，通过给子组件绑定 props 的方式传递到子组件使用
-
-```jsx
-// 父组件
-import Son from "./son/Son.jsx"
-
-function App() {
-  return (
-    <div className="App">
-    <Son message='父组件数据'></Son>
-    </div>
-  );
-}
-
-export default App;
-
-
-//子组件
-const Son=(props)=>{
-    return (
-        <div>
-            <p>这是父组件传递的值{props.message}</p>
-        </div>
-    )
-}
-export default Son
-
-```
-
-### 通讯方式 2（context 上下文传递）
-
-详细用法前在 react hooks 中的 useContext 查看
 
 ## 有状态和无状态组件
 
