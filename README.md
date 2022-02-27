@@ -49,7 +49,6 @@
 #### ahooks
 #### [TS](./docs/中级/框架/TS/TS疑难点总结.md)
 ### [性能优化](./docs/中级/性能优化/前端学点啥-前端性能优化疑难点总结.md)
-### 工作原理
-#### React工作原理
+### 设计模式
 ### 程序日常查阅网站
 [程序员百科](https://gitee.com/link?target=https%3A%2F%2Fgithub.com%2Fmithi%2Freact-philosophies)
