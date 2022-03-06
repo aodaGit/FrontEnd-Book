@@ -119,6 +119,28 @@ const onHandle=():void=>{
 }
 ```
 
+## TS-泛型
+> 对于变量或者函数方法的类型，很多时候，我们都是明确知道的，不过，对于一些场景下，当一个变量类型我们无法明确判定时，便可用泛型的方式进行判定。
+
+```ts
+// 不使用泛型的情况
+// 我们明确知道age是一个number类型
+function getAge(age:number){
+  console('这是一个获取年龄的方法')
+}
+
+// 使用泛型的情况
+// 对于用户输入的信息我们无法明确是什么类型
+function getMessage<T>(message:T){
+  console.log('这是一个获取输入信息的方法')
+}
+
+// 具体调用
+getMessage('信息')   // 此时ts可推导出T的实际类型为string
+
+getMessage(1234)   // 此时ts可推导出T的实际类型为number
+```
+
 ## TS-断言
 
 ```tsx
