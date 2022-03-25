@@ -243,6 +243,85 @@ type A = string;
 
 type B = A & number;
 ```
+## TS高级操(TS内部集成方法)
+### Pick
+> 选取某个类型中的部分key，组成新的类型
+```ts
+// 原有类型
+interface Person {
+  name:string,
+  age:number,
+  sex:'男'｜'女'
+}
+
+// 选取name和age组成新的类型
+type NewPerson =Pick<Person,'name'|'age'>
+
+const people:NewPerson ={
+  name:'前端学点啥',
+  age:18
+}
+```
+### Omit
+> 剔除某个类型中的部分key，组成新的类型
+```ts
+// 原有类型
+interface Person {
+  name:string,
+  age:number,
+  sex:'男'｜'女'
+}
+
+// 选取name和age组成新的类型
+type NewPerson =Omit<Person,'name'|'age'>
+
+const people:NewPerson ={
+  sex:'男'
+}
+```
+
+### Extract
+> 合并两个类型，取其中共同存在的交集为新的类型
+```ts
+// 原有类型1
+interface Person1 {
+  name:string,
+  age:number,
+  sex:'男'｜'女'
+}
+// 原有类型2
+interface Person2 {
+  name:string,
+  sex:'男'｜'女',
+  school:'计算机大学'
+}
+
+// 选取name和age组成新的类型
+type NewPerson =Extract<Person1,Person2>
+
+const people:NewPerson ={
+  name:'前端学点啥',
+  sex:'男'
+}
+```
+
+### Exclude
+> 剔除某个类型中的部分key，组成新的类型，与Omit类似
+```ts
+// 原有类型
+interface Person {
+  name:string,
+  age:number,
+  sex:'男'｜'女'
+}
+
+// 选取name和age组成新的类型
+type NewPerson =Exclude<Person,'name'|'age'>
+
+const people:NewPerson ={
+  sex:'男'
+}
+```
 ## 推荐阅读
 ### [TS中文版](https://jkchao.github.io/typescript-book-chinese/)
 
