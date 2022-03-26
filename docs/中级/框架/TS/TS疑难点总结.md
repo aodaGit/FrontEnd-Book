@@ -1,7 +1,17 @@
 # TS
-> 相信很多人在学习 TS 时，会存在这样一个疑问，写 ts 要学习一大堆 ts 语法，还经常需要写接口文件，js 一把梭，多香，当然这是你没有嗅倒到 TS 的魅力，使用 TS 可以让我们的变量类型更加健壮，同时减少线上由于类型导致的 BUG，少当背锅侠。
 
-> 简要说，TS 就是一个 js 的类型集合，基于 js 之上，可以完美的检测到变量的类型
+> 简单来说，TS 就是 js 的类型集合，基于 ES 的语法，增强 JS 的弱类型，最终 TS 的代码依然会编译为 JS 代码在各种终端运行
+
+> 相信很多人在学习 TS 时，会存在这样一个疑问，写 ts 要学习一大堆 ts 语法，还经常需要写接口文件，js 一把梭，多香，当然这是你没有嗅倒到 TS 的魅力
+
+> TS 相对于 JS 的好处
+>
+> - 类型检查
+>   - TS 的特点就是在编译阶段便可发现类型上的错误，而 JS 只能在运行时发现类型上的错误，简单来说我们在开发阶段，在我们的编辑器中便可以发现类型错误，从而避免部分线上 bug
+> - 类型提示
+>   - 相信很多开发过大型复杂站点的同学都遇到这种情况，某个接口，后端需要 n 个字段，每个字段都需要一一查找，避免不了 CV 大法，使用了 TS 后，直接定义接口 interface 类型，编辑器便可直接提示类型字段，是不是灰常 nice！
+> - 函数参数类型定义
+>   - 对于前端，实际业务开发中，我们会封装很多业务场景相同的组件，使用 js 的时候，当有同事封装了一个组件，在你引入后没有任何提示，没有任何参数说明，是不是很崩溃，使用 TS 可以很开心的解决此问题，TS 可以给函数类型以及返回值定义参数，当我们引入同事组件时，对于必填参数，编辑器直接会明确提示，并且会告诉你参数类型，是不是又灰常 nice！
 
 ## TS-基础类型
 
@@ -58,16 +68,17 @@ const list: number[] = [1, 1, 23];
 // 泛型写法
 const list: Array<number> = [1, 2, 3, 3];
 ```
+
 ## 接口（interfance）
+
 ```ts
 // interface可以简单的一些类型的集合
 // 如我们定义后端返回的用户信息
 interface UserInfo {
-  name:string,
-  age:number,
-  scool?:string
+  name: string;
+  age: number;
+  scool?: string;
 }
-
 ```
 
 ## 枚举(enum)
@@ -113,32 +124,33 @@ numbers.0=O
 
 ```tsx
 // 一般用于函数无返回值时的类型
-const onHandle=():void=>{
+const onHandle = (): void => {
   // 表示函数onHandle仅更新state，无返回值
-  setState(66666)
-}
+  setState(66666);
+};
 ```
 
 ## TS-泛型
+
 > 对于变量或者函数方法的类型，很多时候，我们都是明确知道的，不过，对于一些场景下，当一个变量类型我们无法明确判定时，便可用泛型的方式进行判定。
 
 ```ts
 // 不使用泛型的情况
 // 我们明确知道age是一个number类型
-function getAge(age:number){
-  console('这是一个获取年龄的方法')
+function getAge(age: number) {
+  console("这是一个获取年龄的方法");
 }
 
 // 使用泛型的情况
 // 对于用户输入的信息我们无法明确是什么类型
-function getMessage<T>(message:T){
-  console.log('这是一个获取输入信息的方法')
+function getMessage<T>(message: T) {
+  console.log("这是一个获取输入信息的方法");
 }
 
 // 具体调用
-getMessage('信息')   // 此时ts可推导出T的实际类型为string
+getMessage("信息"); // 此时ts可推导出T的实际类型为string
 
-getMessage(1234)   // 此时ts可推导出T的实际类型为number
+getMessage(1234); // 此时ts可推导出T的实际类型为number
 ```
 
 ## TS-断言
@@ -147,7 +159,7 @@ getMessage(1234)   // 此时ts可推导出T的实际类型为number
 // 参数后添加！感叹号，告诉程序开发者明确知道这是一个明显的类型
 
 // 当我们可以完全确定isShow是一个布尔值时，可使用！告诉编译器，这是一个确定的值
-const isShow! = true
+const isShow! = true;
 ```
 
 ## TS-类型守卫
@@ -243,9 +255,13 @@ type A = string;
 
 type B = A & number;
 ```
-## TS高级操(TS内部集成方法)
+
+## TS 高级操(TS 内部集成方法)
+
 ### Pick
-> 选取某个类型中的部分key，组成新的类型
+
+> 选取某个类型中的部分 key，组成新的类型
+
 ```ts
 // 原有类型
 interface Person {
@@ -262,8 +278,11 @@ const people:NewPerson ={
   age:18
 }
 ```
+
 ### Omit
-> 剔除某个类型中的部分key，组成新的类型
+
+> 剔除某个类型中的部分 key，组成新的类型
+
 ```ts
 // 原有类型
 interface Person {
@@ -281,7 +300,9 @@ const people:NewPerson ={
 ```
 
 ### Extract
+
 > 合并两个类型，取其中共同存在的交集为新的类型
+
 ```ts
 // 原有类型1
 interface Person1 {
@@ -306,7 +327,9 @@ const people:NewPerson ={
 ```
 
 ### Exclude
-> 剔除某个类型中的部分key，组成新的类型，与Omit类似
+
+> 剔除某个类型中的部分 key，组成新的类型，与 Omit 类似
+
 ```ts
 // 原有类型
 interface Person {
@@ -322,6 +345,7 @@ const people:NewPerson ={
   sex:'男'
 }
 ```
-## 推荐阅读
-### [TS中文版](https://jkchao.github.io/typescript-book-chinese/)
 
+## 推荐阅读
+
+### [TS 中文版](https://jkchao.github.io/typescript-book-chinese/)
