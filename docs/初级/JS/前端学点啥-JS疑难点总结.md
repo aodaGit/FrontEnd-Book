@@ -180,4 +180,4 @@ console.log(res()); //2
 > 检测类型中 typeof null 为对象 typeof underdinded 为 underdinded
 
 ## JS中的weakMap和map区别，分别有哪些使用场景
-## JS中如何将函数方法，作为参数进行处理
+## JS高阶函数如何使用
