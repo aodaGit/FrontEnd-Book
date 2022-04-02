@@ -178,3 +178,4 @@ console.log(res()); //2
 > 简而言之，这是一个历史遗留问题，null 和 uniderfinde 都可以表示不存在的值，只是 null 表示丢失的对象，underdined 声明了，但是未赋值时
 >
 > 检测类型中 typeof null 为对象 typeof underdinded 为 underfinde
+## JS中的函数柯里化使用场景
