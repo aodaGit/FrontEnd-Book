@@ -28,7 +28,7 @@ module.exports = WebpackMerge.merge(webpackConfig, {
     // host: '',   //特定域名启动 --host 0.0.28.26.
     // historyApiFallback:"",   //404特定页面  
     contentBase: path.resolve(__dirname, "../dist"), //默认打开的目录
-    inline:true,    //实时刷新
+    // inline:true,    //实时刷新
     // proxy: {   //代理配置
     //   "/api": {
     //     target: "http://localhost:3000",
