@@ -21,3 +21,10 @@ body 参数
 ## service 服务
 
 ## 获取请求头和请求参数
+
+## 连接操作数据库（mySQL）
+
+```js
+// 依赖安装
+yarn add --save @nestjs/typeorm typeorm mysql
+```
