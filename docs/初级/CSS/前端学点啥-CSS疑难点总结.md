@@ -1,5 +1,8 @@
 # CSS
 
+## 为什么有时会用translate来改变位置，而不用position
+translate 动画不会引起浏览器的重绘，position会导致浏览器重绘
+
 ## 控制元素显示隐藏的方法，并说明区别
 
 > 主要有两种方式 display 和 visibility
@@ -35,7 +38,7 @@
 >   /* Output example */
 >   .test {
 >     border: 1px solid #000;
->     @media (min-resolution: 2dppx) {
+>     @media (min-resolution: 2dpx) {
 >       .test {
 >         position: relative;
 >         border: none;
@@ -152,3 +155,16 @@
 ## base64 的原理以及缺点
 
 > base64 是将二进制流转换为字符串的形式，可以达到部分加密的作用
+
+## CSS工程化的理解
+- 可以理解为对CSS模块的一种组织和规划
+- 我们可以将CSS整体划分为字体，样式，颜色等细分，结合less，scss等预处理器，使用全局变量，方便后续的维护和整改
+- 同时为了兼容性考虑，配合webpack，配置css-loader,style-loader 配置postcss，解决浏览器的兼容性问题
+
+## z-index在什么情况下会失效
+- 父元素未设置非static的position属性
+- 元素本身设置了float浮动属性
+
+## css中的动画为何用translate而不用postion
+简单来讲，由translate触发的动画不会引起浏览器的重绘重排，动画位置属性更改后，会直接交给浏览器的此线程，利用GPU来完成渲染，postion的更改会导致浏览器出发layout，浏览器会重绘重排
+
