@@ -105,7 +105,6 @@ React.createElement(
 
 ### redux 和 mobx 的区别？
 
-
 ## 三,组件通讯
 
 > 将 react 看成是一个宇宙，那么组成宇宙的每一个原子之间不可能完全独立，它们之间必然存在可以相互发送和接受信息的方式，这种方式就是组件之间的通讯
@@ -371,7 +370,6 @@ export default Parent
   - 父组件调用子组件，只有子组件引用的 state 改变时，才驱动子组件渲染
     - 使用 memo 方法包裹整个子组件，memo 方法会监听前后两次的 props 值，只有值改变才会驱动渲染
 
-
 ## 五,路由管理
 
 > react 中我们采用 React-router 来解决路由问题
@@ -413,6 +411,31 @@ function App() {
 }
 export default App;
 ```
+
+## React 相关工具库推荐
+
+### 组件库
+
+> 国内使用 Ant design
+> https://ant.design/index-cn
+
+> 国外使用 MUI https://mui.com/zh/
+
+### 图标库
+
+> 集合了各个著名的免费图标库 https://www.npmjs.com/package/react-icons
+
+### 多语言库
+
+> https://www.npmjs.com/package/react-intl
+
+### 大列表渲染库
+
+> https://www.npmjs.com/package/react-virtualized
+
+## react 中如何更好的组织代码结构？
+
+### 善于使用 useMemo 和 useCallBack 来优化
 
 ## react 推荐阅读资料
 

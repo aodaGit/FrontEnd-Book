@@ -238,9 +238,27 @@ let title = "前端学点啥";
 const titles = [...title];
 ```
 
-### 对数据进行排序
+### 可选链操作符的使用（?.）
 
-### ES6 中的 reduce 方法使用
+```ts
+// 可选链用来访问对象不存在的属性时会显示为underfined，而不是直接报错
+const obj = {
+  name: "前端学点啥",
+};
+obj?.age; // underfined
+```
+
+### 合并运算符的使用
+
+```ts
+// 当运算符左边的值为unll，underfined，展示右边的值，类似于默认值使用
+const obj = {
+  name: "前端学点啥",
+};
+obj?.age ?? 18;
+```
+
+### 对数据进行排序
 
 ### JS 中的对象如何创建不重复的键值
 
@@ -323,6 +341,8 @@ console.log(res()); //2
 - 相对于 promise，async 的写法更加优雅
 - 可以使用 try catch 更加方便的捕获错误
 
+### try catch 如何捕获错误
+
 ### requestAnimationFrame 与 setimeout 的区别
 
 - 由于 js 单线程特点，以及 js 的事件循环，settimeout 往往并不能在我们所认为的时间内执行，并且 settieout 执行时如果高于屏幕刷新频率，就会出现卡顿情况
@@ -358,7 +378,90 @@ console.log(res()); //2
 
 ### js 的垃圾回收机制以及如何防止内存泄露
 
-## EvenLoop 事件循环/宏任务和微任务
+## EvenLoop 事件循环/任务队列/宏任务和微任务
+
+> 首先说明一点，事件循环是 JS 能够运行的最根本规则
+
+> 那么什么是事件循环呢，从 JS 的特征说起，我们都知道 JS 是单线程运行的，但是在实际执行代码逻辑的时，我们知道所有代码不可能依次按照顺序去执行，如果这样运行一定会造成很严重的阻塞，为了避免阻塞，一定会有除了主线程之外的其他线程，去运行一些当前不需要运行的逻辑，那么 JS 是如何解决这个问题的呢
+
+> 我们知道 JS 作为一门解析型语言，是需要宿主环境的，其中最大的宿主环境就是浏览器，JS 在与浏览器交互过程中，会将主要的代码解析，也就是主线程交给自己，其他不需要当前运行的逻辑交给浏览器的一些线程，浏览器将这些逻辑按照一定的顺序排列在一个任务池中，就像我们平时排队买网红食品一样，形成一定的队列顺序，这就是任务队列，当这些队列中的逻辑完成后，又通知主线程，并入主线程的运行中。
+
+> 再从上面抽象的描述中，从专业的角度去看，JS 如何解决这些问题？
+
+> JS 将所有的代码分为两类，同步代码和异步代码，我们最常见的方法和逻辑执行，以及脚本加载等都属于同步代码，JS 会率先执行这些代码，当逐行去解析遇到异步代码（异步编程中提到的概念：1.定时器 2.promise）时，JS 会将这些异步代码放到任务队列中，同时区分为宏任务（点击事件，定时器等）和微任务（promise），当所有同步代码执行完毕，JS 会去执行任务队列中的微任务，直到所有微任务执行完毕，再去执行宏任务，然后发现了微任务又继续执行，执行完毕，再去执行宏任务，这就是整个 JS 执行所有代码逻辑的根据原则
+
+```ts
+const fn = async () => {
+  try {
+    console.log("进入catch");
+    setTimeout(() => {
+      console.log("执行定时器宏任务");
+    }, 0);
+    new Promise((resove, reject) => {
+      console.log("同步代码1");
+      resove();
+    }).then(() => {
+      console.log("微任务1");
+    });
+
+    function async1() {
+      console.log("同步代码2");
+    }
+    await async1();
+    console.log("微任务2");
+    console.log("微任务3");
+
+    await Promise.reject(() => {
+      throw new Error("promise的错误");
+    })
+      .then(() => {})
+      .catch((e) => {
+        console.log("捕获promise的错误", e);
+      });
+    console.log("微任务执行完毕");
+    throw new Error("459089786756564321");
+  } catch (error) {
+    console.log("错误信息展示:", error);
+  }
+};
+fn();
+/**最终执行结果*/
+// 进入catch
+// 同步代码1
+// 同步代码2
+// 微任务1
+// 微任务2
+// 微任务3
+// 捕获promise的错误 [Function (anonymous)]
+// 微任务执行完毕
+// 错误信息展示: Error: 459089786756564321
+//     at test (/Volumes/work/FrontEnd-Book/tempCodeRunnerFile.javascript:29:11)
+//     at processTicksAndRejections (node:internal/process/task_queues:96:5)
+// 执行定时器宏任务
+```
+
+> 根据上面对于事件循环的解释，我们来分析上面这段代码的执行
+
+> 第一个 log 为同步代码，输出进入 catch
+
+> 第二个位定时器，属于异步代码中的宏任务，放入任务队列，标记宏 1
+
+> 第三个遇到 promise，其中 promise 的 resolve 为同步代码，这是很多人会犯的错误，输出同步代码 1
+
+> 第四个遇到 promise 的 then 回调，属于异步代码中的微任务，放入任务队列，标记微 1
+
+> 第五个遇到 await，await 后面的执行实际相当于 promise.resolove 语法糖，因此属于同步任务，执行 async1，输出同步代码 2
+
+> 自此同步代码完毕，await 后面的所有执行都为异步代码，同时 await 为 promise 的语法糖，因此上后面的代码都属于微任务，自此便开始从任务队列中按照顺序执行微任务，输出微任务 1
+
+> 第六个遇到两个 log，相当于 promise 的 then 回调，放入任务队列中的微任务，标记为微 2 和微 3，并输出微任务 2 和微任务 3
+> 第七个 try catch 开始捕获同步错误，promise 相关的异步错误只能由 promise 自己来捕获，输出捕获 promise 的错误 [Function (anonymous)]
+
+> 第八个输出第二次事件循环中的微任务，输出微任务执行完毕
+
+> 第九个由 try catch 捕获错误，输入错误展示
+
+> 第十个输出宏任务定时器
 
 ### js 的 setimout 为何时间不准确
 
@@ -431,3 +534,46 @@ vue3 的底层就是采用了 proxy 来对数据实现响应式，究其原因�
 > 前端常常在处理数据时，需要拷贝一份，对于单层对象可实现 es6 扩展运算进行拷贝，多层对象可使用 json.parse（json.stringfy（待拷贝对象））实现，不过这种方法也有一个弊端，当对象中某个键对应的值为 uniderfinged 时，将不会被拷贝，同时对于函数方法也不会被拷贝，业界处理方式为引入 lodash 库进行—deepclone 深度克隆
 
 ## JS 高阶函数如何使用
+
+## JS 命名最佳实践
+
+1. 变量命名
+
+```ts
+// 小驼峰命名
+let frontLearn = "前端学点啥";
+```
+
+2. 布尔值命名
+
+```ts
+// 使用is或has为前端标示状态
+const isFront = true;
+```
+
+3. 函数命名
+
+```ts
+// 使用on或者语义化作为函数方式名字
+
+// 名字变化回调
+const onNameChange = () => {};
+// 获取用户名字
+const getUserName = () => {};
+```
+
+4. 常量命名
+
+```ts
+// 采用全部大写和中划线来命名
+const FRONT_NAME = "前端学点啥";
+```
+
+5. 组件命名
+
+```ts
+// 采用大驼峰来命名
+<FrontName></FrontName>
+```
+
+## 递归的使用
