@@ -1,0 +1,14 @@
+{
+  "name": "react-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "husky": "^4.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "node scripts/verify-commit.js"
+    }
+  }
+}
