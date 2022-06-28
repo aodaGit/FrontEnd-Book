@@ -2,6 +2,14 @@
 
 > webpack已成为所有前端项目必备的打包工具，真实在项目中配置，不仅可以让自己对webpack的打包做一个全面了解，也对自己技术有很大提升，本文档会根据webpack最新的api进行真实打包配置，请需要学习的同学务必亲自配置！
 
+## webpack打包流程示意图
+
+![webpack打包详情图.jpeg](https://i-s2.328888.xyz/2022/06/28/62ba8e3d73f3a.jpeg)
+
+## webpack打包原理
+
+![webpack打包流程图示.png](https://i-s2.328888.xyz/2022/06/28/62ba8f860f5fe.png)
+
 ### 依赖包
 
 > 配置webpack打包前，先安装webapck打包的对应依赖包
