@@ -1,5 +1,11 @@
 # JS
 
+> JS 具体的代码执行流程
+
+JS 源代码 => 词法解析 => 生成 AST 语法树（机器只能识别和操作 AST 语法树）=> 执行代码逻辑，重新赋值 AST => 生成机器字节码并执行
+
+![UUxS.jpg](https://s1.328888.xyz/2022/07/07/UUxS.jpg)
+
 ## 数据类型
 
 > js 包含七种类型。null underfined string number boolber object Sybil，biginit
@@ -86,6 +92,7 @@ const test = () => {
 
 // 函数字面量创建的函数方法存在暂时性死区，因此上述方法会报错，找不到当前test方法
 ```
+
 ### 数组有哪些常用的原生方法
 
 let array=[1,2,3,4,5,6567,4343,'432432']
