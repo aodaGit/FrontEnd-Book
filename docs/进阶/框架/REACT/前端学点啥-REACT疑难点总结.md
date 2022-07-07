@@ -435,7 +435,7 @@ export default App;
 
 ## react 中如何更好的组织代码结构？
 
-### 善于使用 useMemo 和 useCallBack 来优化
+直接查看这篇大佬的文章 https://segmentfault.com/a/1190000019759949
 
 ## react 推荐阅读资料
 
